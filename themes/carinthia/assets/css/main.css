@@ -156,3 +156,36 @@ a {
     display: block !important;
   }
 }
+
+/* Post list styles */
+.post-list {
+  margin-top: 1.5rem;
+}
+
+.post-item {
+  margin-bottom: 0.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.post-date {
+  color: #888;
+  font-family: monospace;
+  font-size: 0.9rem;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .post-date {
+  color: #aaa;
+}
+
+.post-title {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+.post-title:hover {
+  text-decoration: underline;
+}

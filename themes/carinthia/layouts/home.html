@@ -1,7 +1,14 @@
 {{ define "main" }}
   {{ .Content }}
-  {{ range site.RegularPages }}
-    <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
-    {{ .Summary }}
+  {{ if site.RegularPages }}
+    <h2>LATEST POSTS</h2>
+    <div class="post-list">
+      {{ range site.RegularPages }}
+        <div class="post-item">
+          <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
+          <a href="{{ .RelPermalink }}" class="post-title">{{ .LinkTitle }}</a>
+        </div>
+      {{ end }}
+    </div>
   {{ end }}
 {{ end }}
