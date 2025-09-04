@@ -41,7 +41,7 @@ body {
   background-color: var(--color-bg);
   font-family: sans-serif;
   line-height: 1.5;
-  margin: 1rem;
+  margin: 1rem auto;
   max-width: 768px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
