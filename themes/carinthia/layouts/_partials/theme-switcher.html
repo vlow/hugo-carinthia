@@ -1,0 +1,92 @@
+<button
+    id="theme-switcher"
+    class="theme-switcher"
+    aria-label="Switch theme"
+    type="button"
+>
+    <!-- System icon with "A" indicator -->
+    <svg
+        class="theme-icon theme-icon-system"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <!-- Sun rays for system (will show sun or moon based on system preference) -->
+        <g class="system-sun">
+            <circle
+                cx="12"
+                cy="12"
+                r="4"
+                stroke="currentColor"
+                stroke-width="2"
+                opacity="0.3"
+            />
+            <path
+                d="M12 2V6M12 18V22M4.22 4.22L6.34 6.34M17.66 17.66L19.78 19.78M2 12H6M18 12H22M4.22 19.78L6.34 17.66M17.66 6.34L19.78 4.22"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                opacity="0.3"
+            />
+        </g>
+        <!-- Moon for system (hidden by default) -->
+        <path
+            class="system-moon"
+            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            opacity="0.3"
+            style="display: none"
+        />
+        <!-- "A" indicator for Auto -->
+        <text
+            x="12"
+            y="22"
+            font-size="16"
+            font-weight="bold"
+            fill="currentColor"
+        >
+            A
+        </text>
+    </svg>
+
+    <!-- Light mode sun icon -->
+    <svg
+        class="theme-icon theme-icon-light"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" />
+        <path
+            d="M12 2V6M12 18V22M4.22 4.22L6.34 6.34M17.66 17.66L19.78 19.78M2 12H6M18 12H22M4.22 19.78L6.34 17.66M17.66 6.34L19.78 4.22"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+        />
+    </svg>
+
+    <!-- Dark mode moon icon -->
+    <svg
+        class="theme-icon theme-icon-dark"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <path
+            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+    </svg>
+</button>

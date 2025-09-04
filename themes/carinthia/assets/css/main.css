@@ -1,22 +1,123 @@
+:root {
+  --color-bg: #ffffff;
+  --color-text: #222222;
+  --color-border: #222222;
+  --color-link: #0000ee;
+  --color-button-bg: #f0f0f0;
+  --color-button-hover: #e0e0e0;
+}
+
+[data-theme="light"] {
+  --color-bg: #ffffff;
+  --color-text: #222222;
+  --color-border: #222222;
+  --color-link: #0000ee;
+  --color-button-bg: #f0f0f0;
+  --color-button-hover: #e0e0e0;
+}
+
+[data-theme="dark"] {
+  --color-bg: #1a1a1a;
+  --color-text: #e0e0e0;
+  --color-border: #e0e0e0;
+  --color-link: #66b3ff;
+  --color-button-bg: #2a2a2a;
+  --color-button-hover: #3a3a3a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #1a1a1a;
+    --color-text: #e0e0e0;
+    --color-border: #e0e0e0;
+    --color-link: #66b3ff;
+    --color-button-bg: #2a2a2a;
+    --color-button-hover: #3a3a3a;
+  }
+}
+
 body {
-  color: #222;
+  color: var(--color-text);
+  background-color: var(--color-bg);
   font-family: sans-serif;
   line-height: 1.5;
   margin: 1rem;
   max-width: 768px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 header {
-  border-bottom: 1px solid #222;
+  border-bottom: 1px solid var(--color-border);
   margin-bottom: 1rem;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-content {
+  flex-grow: 1;
 }
 
 footer {
-  border-top: 1px solid #222;
+  border-top: 1px solid var(--color-border);
   margin-top: 1rem;
 }
 
 a {
-  color: #00e;
+  color: var(--color-link);
   text-decoration: none;
+}
+
+/* Theme Switcher Styles */
+.theme-switcher {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-button-bg);
+  color: var(--color-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.theme-switcher:hover {
+  background-color: var(--color-button-hover);
+}
+
+.theme-icon {
+  display: none;
+  width: 24px;
+  height: 24px;
+}
+
+/* Show correct icon based on theme */
+[data-theme="system"] .theme-icon-system,
+:root:not([data-theme]) .theme-icon-system {
+  display: block;
+}
+
+[data-theme="light"] .theme-icon-light {
+  display: block;
+}
+
+[data-theme="dark"] .theme-icon-dark {
+  display: block;
+}
+
+/* System theme icon adjustments based on system preference */
+@media (prefers-color-scheme: dark) {
+  [data-theme="system"] .system-sun,
+  :root:not([data-theme]) .system-sun {
+    display: none;
+  }
+  
+  [data-theme="system"] .system-moon,
+  :root:not([data-theme]) .system-moon {
+    display: block !important;
+  }
 }
