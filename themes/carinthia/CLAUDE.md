@@ -101,6 +101,12 @@ hugo list drafts
 - Place JavaScript files in `assets/js/`
 - Use Hugo Pipes for processing: `{{ $css := resources.Get "css/main.css" | minify }}`
 
+### CSS Font Sizing Guidelines
+- **Use CSS clamp() for responsive font sizes**: This theme uses CSS `clamp()` function for responsive typography that scales smoothly between devices
+- **When adding new CSS classes with font-size, follow existing clamp patterns**: Check `assets/css/main.css` for existing clamp values and maintain consistency
+- **Example clamp usage**: `font-size: clamp(1rem, 2.5vw, 1.5rem);` (min: 1rem, preferred: 2.5vw, max: 1.5rem)
+- **Maintain visual hierarchy**: Ensure new font-size classes fit within the established typographic scale
+
 ### Content Organization
 - Use front matter for metadata (title, date, draft, tags, categories)
 - Follow Hugo's content organization conventions
