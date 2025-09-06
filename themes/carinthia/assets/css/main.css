@@ -189,3 +189,31 @@ a {
 .post-title:hover {
   text-decoration: underline;
 }
+
+/* Hashtag cloud styles */
+.hashtag-cloud {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.hashtag {
+  display: inline-block;
+  color: #666;
+  font-size: 0.9rem;
+  text-decoration: none;
+  margin-right: 0.5rem;
+  margin-bottom: 0.25rem;
+  transition: color 0.2s ease;
+}
+
+.hashtag:hover {
+  color: var(--color-link);
+}
+
+[data-theme="dark"] .hashtag {
+  color: #999;
+}
+
+[data-theme="dark"] .hashtag:hover {
+  color: var(--color-link);
+}
