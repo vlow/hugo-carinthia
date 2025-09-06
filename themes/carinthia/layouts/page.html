@@ -1,5 +1,8 @@
 {{ define "main" }}
 <h1>{{ .Title }}</h1>
+{{ if .Site.Params.subtitle }}
+<p class="page-subtitle">{{ .Site.Params.subtitle }}</p>
+{{ end }}
 
 <div class="post-meta">
     {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }} {{

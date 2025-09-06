@@ -1,7 +1,10 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://tc3.eu/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'tc3'
 theme = "carinthia"
+
+[params]
+  subtitle = "Your configurable site subtitle"
 
 [params.social]
   github = "vlow"
