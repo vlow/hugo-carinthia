@@ -1,10 +1,17 @@
 {{ define "main" }}
-  <h1>{{ .Title }}</h1>
+<h1>{{ .Title }}</h1>
 
-  {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }}
-  {{ $dateHuman := .Date | time.Format ":date_long" }}
-  <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+<div class="post-meta">
+    {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }} {{
+    $dateHuman := .Date | time.Format ":date_long" }}
+    <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
 
-  {{ .Content }}
-  {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
-{{ end }}
+    <span class="meta-separator">•</span>
+    <span class="word-count">{{ .WordCount }} words</span>
+
+    <span class="meta-separator">•</span>
+    <span class="reading-time">{{ .ReadingTime }} min read</span>
+</div>
+
+{{ .Content }} {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }} {{
+end }}
