@@ -1,14 +1,43 @@
-{{ define "main" }}
-  {{ .Content }}
-  {{ if site.RegularPages }}
-    <h2>LATEST POSTS</h2>
-    <div class="post-list">
-      {{ range site.RegularPages }}
-        <div class="post-item">
-          <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
-          <a href="{{ .RelPermalink }}" class="post-title">{{ .LinkTitle }}</a>
+{{ define "main" }} {{ .Content }} {{ $blips := where site.Pages "Section"
+"blips" }} {{ if $blips }} {{ $latestBlip := index ($blips.ByDate.Reverse) 0 }}
+<div class="latest-blip">
+    <h2>LATEST BLIP</h2>
+    <article class="blip-item">
+        <div class="post-meta">
+            {{ $dateMachine := $latestBlip.Date | time.Format
+            "2006-01-02T15:04:05-07:00" }} {{ $dateHuman := $latestBlip.Date |
+            time.Format ":date_long" }}
+            <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+
+            <span class="meta-separator">•</span>
+            <a
+                href="{{ $latestBlip.RelPermalink }}"
+                class="blip-permalink-icon"
+                aria-label="Permalink"
+                title="Permalink"
+                >{{ $icon := resources.Get "icons/link.svg" }} {{ $icon.Content
+                | safeHTML }}</a
+            >
         </div>
-      {{ end }}
+
+        <div class="blip-content">{{ $latestBlip.Content }}</div>
+
+        {{ if $latestBlip.Params.tags }} {{ partial "terms.html" (dict
+        "taxonomy" "tags" "page" $latestBlip) }} {{ end }}
+    </article>
+
+    <div class="view-all-blips">
+        <a href="/blips/" class="view-all-link">View previous Blips...</a>
     </div>
-  {{ end }}
-{{ end }}
+</div>
+{{ end }} {{ if site.RegularPages }}
+<h2>LATEST POSTS</h2>
+<div class="post-list">
+    {{ range site.RegularPages }}
+    <div class="post-item">
+        <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
+        <a href="{{ .RelPermalink }}" class="post-title">{{ .LinkTitle }}</a>
+    </div>
+    {{ end }}
+</div>
+{{ end }} {{ end }}

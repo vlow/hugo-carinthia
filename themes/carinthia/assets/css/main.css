@@ -281,6 +281,19 @@ a {
     opacity: 0.7;
 }
 
+.blip-permalink-icon {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    text-decoration: none;
+    color: inherit;
+}
+
+.blip-permalink-icon svg {
+    width: 1em;
+    height: 1em;
+}
+
 [data-theme="dark"] .site-subtitle {
     color: #ccc;
 }
