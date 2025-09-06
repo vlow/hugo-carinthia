@@ -345,6 +345,10 @@ a {
     height: 1em;
 }
 
+.blip-single {
+    padding-top: 2rem;
+}
+
 .section-separator {
     border: none;
     height: 1px;
