@@ -3,7 +3,7 @@
 {{ .Content }} {{ if .Pages }}
 <div class="blips-list">
     {{ range .Pages.ByDate.Reverse }}
-    <hr class="blips-separator" />
+    <hr class="section-separator" />
     <article class="blip-item">
         <div class="post-meta">
             {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00"

@@ -1,5 +1,9 @@
-{{ define "main" }} {{ .Content }} {{ $blips := where site.Pages "Section"
-"blips" }} {{ if $blips }} {{ $latestBlip := index ($blips.ByDate.Reverse) 0 }}
+{{ define "main" }} {{ .Content }}
+
+<hr class="section-separator" />
+
+{{ $blips := where site.Pages "Section" "blips" }} {{ if $blips }} {{
+$latestBlip := index ($blips.ByDate.Reverse) 0 }}
 <div class="latest-blip">
     <h2>LATEST BLIP</h2>
     <article class="blip-item">
@@ -30,8 +34,11 @@
         <a href="/blips/" class="view-all-link">View all Blips...</a>
     </div>
 </div>
-{{ end }} {{ $posts := where site.RegularPages "Section" "ne" "blips" }} {{ if
-$posts }}
+{{ end }}
+
+<hr class="section-separator" />
+
+{{ $posts := where site.RegularPages "Section" "ne" "blips" }} {{ if $posts }}
 <h2>LATEST POSTS</h2>
 <div class="post-list">
     {{ range $posts }}
