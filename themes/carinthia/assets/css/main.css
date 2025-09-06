@@ -294,6 +294,18 @@ a {
     height: 1em;
 }
 
+.blips-separator {
+    border: none;
+    height: 1px;
+    background-color: #d0d0d0;
+    margin: 1.5rem 0;
+    opacity: 0.8;
+}
+
 [data-theme="dark"] .site-subtitle {
     color: #ccc;
+}
+
+[data-theme="dark"] .blips-separator {
+    background-color: #444;
 }

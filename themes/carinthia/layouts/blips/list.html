@@ -1,32 +1,27 @@
 {{ define "main" }}
 <h1>{{ .Title }}</h1>
-{{ .Content }}
-
-{{ if .Pages }}
-  <div class="blips-list">
+{{ .Content }} {{ if .Pages }}
+<div class="blips-list">
     {{ range .Pages.ByDate.Reverse }}
-      <article class="blip-item">
+    <hr class="blips-separator" />
+    <article class="blip-item">
         <div class="post-meta">
-          {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }}
-          {{ $dateHuman := .Date | time.Format ":date_long" }}
-          <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+            {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00"
+            }} {{ $dateHuman := .Date | time.Format ":date_long" }}
+            <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
         </div>
 
-        <div class="blip-content">
-          {{ .Content }}
-        </div>
+        <div class="blip-content">{{ .Content }}</div>
 
-        {{ if .Params.tags }}
-          {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
-        {{ end }}
+        {{ if .Params.tags }} {{ partial "terms.html" (dict "taxonomy" "tags"
+        "page" .) }} {{ end }}
 
         <div class="blip-permalink">
-          <a href="{{ .RelPermalink }}" class="blip-link">Permalink</a>
+            <a href="{{ .RelPermalink }}" class="blip-link">Permalink</a>
         </div>
-      </article>
+    </article>
     {{ end }}
-  </div>
+</div>
 {{ else }}
-  <p>No blips yet.</p>
-{{ end }}
-{{ end }}
+<p>No blips yet.</p>
+{{ end }} {{ end }}
