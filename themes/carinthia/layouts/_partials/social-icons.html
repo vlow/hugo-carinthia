@@ -1,0 +1,55 @@
+{{ if .Site.Params.social }}
+<div class="social-links">
+    {{ if .Site.Params.social.github }}
+    <a
+        href="https://github.com/{{ .Site.Params.social.github }}"
+        target="_blank"
+        rel="noopener"
+        aria-label="GitHub"
+    >
+        {{ $icon := resources.Get "icons/github.svg" }} {{ $icon.Content |
+        safeHTML }}
+    </a>
+    {{ end }} {{ if .Site.Params.social.linkedin }}
+    <a
+        href="https://linkedin.com/in/{{ .Site.Params.social.linkedin }}"
+        target="_blank"
+        rel="noopener"
+        aria-label="LinkedIn"
+    >
+        {{ $icon := resources.Get "icons/linkedin.svg" }} {{ $icon.Content |
+        safeHTML }}
+    </a>
+    {{ end }} {{ if .Site.Params.social.mastodon }}
+    <a
+        href="{{ .Site.Params.social.mastodon }}"
+        target="_blank"
+        rel="noopener me"
+        aria-label="Mastodon"
+    >
+        {{ $icon := resources.Get "icons/mastodon.svg" }} {{ $icon.Content |
+        safeHTML }}
+    </a>
+    {{ end }} {{ if .Site.Params.social.pixelfed }}
+    <a
+        href="{{ .Site.Params.social.pixelfed }}"
+        target="_blank"
+        rel="noopener me"
+        aria-label="Pixelfed"
+    >
+        {{ $icon := resources.Get "icons/pixelfed.svg" }} {{ $icon.Content |
+        safeHTML }}
+    </a>
+    {{ end }} {{ if .Site.Params.social.peertube }}
+    <a
+        href="{{ .Site.Params.social.peertube }}"
+        target="_blank"
+        rel="noopener me"
+        aria-label="PeerTube"
+    >
+        {{ $icon := resources.Get "icons/peertube.svg" }} {{ $icon.Content |
+        safeHTML }}
+    </a>
+    {{ end }}
+</div>
+{{ end }}
