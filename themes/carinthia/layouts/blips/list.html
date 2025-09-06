@@ -9,16 +9,23 @@
             {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00"
             }} {{ $dateHuman := .Date | time.Format ":date_long" }}
             <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+
+            <span class="meta-separator">•</span>
+            <a
+                href="{{ .RelPermalink }}"
+                class="blip-permalink-icon"
+                aria-label="Permalink"
+                title="Permalink"
+            >
+                {{ $icon := resources.Get "icons/link.svg" }} {{ $icon.Content |
+                safeHTML }}
+            </a>
         </div>
 
         <div class="blip-content">{{ .Content }}</div>
 
         {{ if .Params.tags }} {{ partial "terms.html" (dict "taxonomy" "tags"
         "page" .) }} {{ end }}
-
-        <div class="blip-permalink">
-            <a href="{{ .RelPermalink }}" class="blip-link">Permalink</a>
-        </div>
     </article>
     {{ end }}
 </div>
