@@ -4,7 +4,7 @@ title = 'tc3'
 theme = "carinthia"
 
 [params]
-  subtitle = "Your configurable site subtitle"
+  subtitle = "Thoughts on Software Engineering and Management"
 
 [params.social]
   github = "vlow"
@@ -21,14 +21,29 @@ theme = "carinthia"
         weight = 10
 
     [[menus.main]]
-        name = 'Posts'
-        pageRef = '/posts'
+        name = 'Blips'
+        pageRef = '/blips'
         weight = 20
+
+    [[menus.main]]
+        name = 'Articles'
+        pageRef = '/posts'
+        weight = 30
+
+    [[menus.main]]
+        name = 'Projects'
+        pageRef = '/projects'
+        weight = 40
+
+    [[menus.main]]
+        name = 'Library'
+        pageRef = '/library'
+        weight = 50
 
     [[menus.main]]
         name = 'Tags'
         pageRef = '/tags'
-        weight = 30
+        weight = 60
 
 [module]
     [module.hugoVersion]
