@@ -27,13 +27,14 @@
     </article>
 
     <div class="view-all-blips">
-        <a href="/blips/" class="view-all-link">View previous Blips...</a>
+        <a href="/blips/" class="view-all-link">View all Blips...</a>
     </div>
 </div>
-{{ end }} {{ if site.RegularPages }}
+{{ end }} {{ $posts := where site.RegularPages "Section" "ne" "blips" }} {{ if
+$posts }}
 <h2>LATEST POSTS</h2>
 <div class="post-list">
-    {{ range site.RegularPages }}
+    {{ range $posts }}
     <div class="post-item">
         <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
         <a href="{{ .RelPermalink }}" class="post-title">{{ .LinkTitle }}</a>
