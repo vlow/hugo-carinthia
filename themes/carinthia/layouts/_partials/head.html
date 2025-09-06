@@ -1,22 +1,30 @@
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width">
-<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>
+    {{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title
+    site.Title }}{{ end }}
+</title>
 <script>
-  (function() {
-    const THEME_KEY = 'theme-preference';
-    const themes = ['system', 'light', 'dark'];
-    
-    function getThemePreference() {
-      const stored = localStorage.getItem(THEME_KEY);
-      if (stored && themes.includes(stored)) {
-        return stored;
-      }
-      return 'system';
-    }
-    
-    const theme = getThemePreference();
-    document.documentElement.setAttribute('data-theme', theme);
-  })();
+    (function () {
+        const THEME_KEY = "theme-preference";
+        const themes = ["system", "light", "dark"];
+
+        function getThemePreference() {
+            const stored = localStorage.getItem(THEME_KEY);
+            if (stored && themes.includes(stored)) {
+                return stored;
+            }
+            return "system";
+        }
+
+        const theme = getThemePreference();
+        document.documentElement.setAttribute("data-theme", theme);
+    })();
 </script>
-{{ partialCached "head/css.html" . }}
-{{ partialCached "head/js.html" . }}
+{{ partialCached "head/css.html" . }} {{ partialCached "head/js.html" . }} {{
+with .OutputFormats.Get "rss" }} {{ printf `<link
+    rel="%q"
+    type="%q"
+    href="%q"
+    title="%q"
+/>` .Rel .MediaType.Type .Permalink site.Title | safeHTML }} {{ end }}
