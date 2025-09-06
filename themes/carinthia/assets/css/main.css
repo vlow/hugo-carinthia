@@ -360,3 +360,75 @@ a {
 [data-theme="dark"] .section-separator {
     background-color: #444;
 }
+
+/* Basic code block styling for copy button support */
+pre {
+    position: relative;
+    overflow-x: auto;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 8px;
+    font-family:
+        "SF Mono", "Monaco", "Cascadia Code", "Roboto Mono", Consolas,
+        "Courier New", monospace;
+    line-height: 1.4;
+}
+
+.code-block-wrapper {
+    position: relative;
+    margin: 1.5rem 0;
+}
+
+.code-copy-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 0.375rem;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.2s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.code-copy-btn:hover {
+    background: rgba(0, 0, 0, 0.15);
+    color: #333;
+}
+
+.code-copy-btn.copied {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+[data-theme="dark"] .code-copy-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ccc;
+}
+
+[data-theme="dark"] .code-copy-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .code-copy-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #ccc;
+    }
+
+    :root:not([data-theme="light"]) .code-copy-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+    }
+}

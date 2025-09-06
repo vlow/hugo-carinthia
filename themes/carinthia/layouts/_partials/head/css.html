@@ -1,9 +1,35 @@
-{{- with resources.Get "css/main.css" }}
-  {{- if hugo.IsDevelopment }}
-    <link rel="stylesheet" href="{{ .RelPermalink }}">
-  {{- else }}
-    {{- with . | minify | fingerprint }}
-      <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
-    {{- end }}
-  {{- end }}
-{{- end }}
+{{- with resources.Get "css/main.css" }} {{- if hugo.IsDevelopment }}
+<link rel="stylesheet" href="{{ .RelPermalink }}" />
+{{- else }} {{- with . | minify | fingerprint }}
+<link
+    rel="stylesheet"
+    href="{{ .RelPermalink }}"
+    integrity="{{ .Data.Integrity }}"
+    crossorigin="anonymous"
+/>
+{{- end }} {{- end }} {{- end }} {{/* Syntax highlighting stylesheets -
+controlled by JavaScript */}} {{- with resources.Get "css/syntax-light.css" }}
+{{- if hugo.IsDevelopment }}
+<link rel="stylesheet" href="{{ .RelPermalink }}" id="syntax-light" disabled />
+{{- else }} {{- with . | minify | fingerprint }}
+<link
+    rel="stylesheet"
+    href="{{ .RelPermalink }}"
+    integrity="{{ .Data.Integrity }}"
+    crossorigin="anonymous"
+    id="syntax-light"
+    disabled
+/>
+{{- end }} {{- end }} {{- end }} {{- with resources.Get "css/syntax-dark.css" }}
+{{- if hugo.IsDevelopment }}
+<link rel="stylesheet" href="{{ .RelPermalink }}" id="syntax-dark" disabled />
+{{- else }} {{- with . | minify | fingerprint }}
+<link
+    rel="stylesheet"
+    href="{{ .RelPermalink }}"
+    integrity="{{ .Data.Integrity }}"
+    crossorigin="anonymous"
+    id="syntax-dark"
+    disabled
+/>
+{{- end }} {{- end }} {{- end }}
