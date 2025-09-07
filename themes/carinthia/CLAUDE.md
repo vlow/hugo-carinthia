@@ -49,10 +49,10 @@ This theme utilizes the new directory structure introduced in Hugo 0.146.0:
 ### Development
 ```bash
 # Start development server
-hugo server -D
+hugo server -D --port 1314
 
 # Start with theme from parent directory
-hugo server --theme carinthia
+hugo server --theme carinthia --port 1314
 
 # Build the site
 hugo
@@ -119,13 +119,13 @@ hugo list drafts
 ## Testing
 ```bash
 # Run local server to test
-hugo server -D
+hugo server -D --port 1314
 
 # Build and check output
 hugo && ls -la public/
 
 # Check for broken links (requires external tool)
-hugo --baseURL http://localhost:1313 && hugo server
+hugo --baseURL http://localhost:1314 && hugo server --port 1314
 ```
 
 ## Common Tasks
@@ -138,7 +138,7 @@ hugo --baseURL http://localhost:1313 && hugo server
 ### Modifying styles
 1. Edit `assets/css/main.css`
 2. Changes are automatically processed by Hugo's asset pipeline
-3. Use `hugo server` to see changes live
+3. Use `hugo server --port 1314` to see changes live
 
 ### Adding JavaScript functionality
 1. Edit `assets/js/main.js`
