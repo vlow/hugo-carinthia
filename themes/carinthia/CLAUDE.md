@@ -114,7 +114,7 @@ hugo list drafts
 
 ### Menu Configuration
 - Menus are configured in `hugo.toml` under `[menus]`
-- Current menu items: Home, Posts, Tags
+- Current menu items: Home, Blips, Articles, Projects, Library, Tags
 
 ## Testing
 ```bash
@@ -129,6 +129,10 @@ hugo --baseURL http://localhost:1314 && hugo server --port 1314
 ```
 
 ## Common Tasks
+
+### Adding test content
+- This is a theme. To test it with content, there is a blog (hugo.toml and content) two directories up.
+- Don't create any content files within the theme. If we need test content, place it in the parent example blog.
 
 ### Adding a new template
 1. Create the template file in `layouts/`
