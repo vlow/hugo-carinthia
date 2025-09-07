@@ -8,46 +8,50 @@
 <div class="library-single">
     <h1 class="sr-only">{{ .Title }}</h1>
 
+    {{ if .Params.summary }}
+    <div class="library-summary">
+        <p class="summary-text">{{ .Params.summary }}</p>
+    </div>
+    {{ end }}
+
     <div class="library-meta">
         {{ if .Params.finished_date }}
         {{ $dateMachine := .Params.finished_date | time.Format "2006-01-02T15:04:05-07:00" }}
         {{ $dateHuman := .Params.finished_date | time.Format ":date_long" }}
         <div class="meta-item">
-            <strong>Finished:</strong> <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+            <span class="meta-label">Finished</span>
+            <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
         </div>
         {{ end }}
 
         {{ if .Params.category }}
         <div class="meta-item">
-            <strong>Category:</strong> <span class="category-{{ .Params.category }}">{{ .Params.category | title }}</span>
+            <span class="meta-label">Category</span>
+            <span class="category-badge category-{{ .Params.category }}">{{ .Params.category | title }}</span>
         </div>
         {{ end }}
 
         {{ if .Params.pages }}
         <div class="meta-item">
-            <strong>Pages:</strong> {{ .Params.pages }}
+            <span class="meta-label">Pages</span>
+            <span>{{ .Params.pages }}</span>
         </div>
         {{ end }}
 
         {{ if .Params.average_reading_time }}
         <div class="meta-item">
-            <strong>Reading Time:</strong> {{ .Params.average_reading_time }}
+            <span class="meta-label">Reading Time</span>
+            <span>{{ .Params.average_reading_time }} hours</span>
         </div>
         {{ end }}
 
         {{ if .Params.isbn }}
         <div class="meta-item">
-            <strong>ISBN:</strong> {{ .Params.isbn }}
+            <span class="meta-label">ISBN</span>
+            <span class="isbn">{{ .Params.isbn }}</span>
         </div>
         {{ end }}
     </div>
-
-    {{ if .Params.summary }}
-    <div class="library-summary">
-        <h3>Summary</h3>
-        <p>{{ .Params.summary }}</p>
-    </div>
-    {{ end }}
 
     {{ .Content }}
 
