@@ -33,10 +33,18 @@
 
                         <div class="project-links">
                             {{ with .Params.github }}
-                                <a href="{{ . }}" class="project-link" target="_blank" rel="noopener">GitHub</a>
+                                <a href="{{ . }}" class="project-github-bottom" target="_blank" rel="noopener">
+                                    {{ $icon := resources.Get "icons/github.svg" }}
+                                    {{ if $icon }}{{ $icon.Content | safeHTML }}{{ end }}
+                                    GitHub
+                                </a>
                             {{ end }}
                             {{ with .Params.website }}
-                                <a href="{{ . }}" class="project-link" target="_blank" rel="noopener">Website</a>
+                                <a href="{{ . }}" class="project-website-bottom" target="_blank" rel="noopener">
+                                    {{ $icon := resources.Get "icons/link.svg" }}
+                                    {{ if $icon }}{{ $icon.Content | safeHTML }}{{ end }}
+                                    Website
+                                </a>
                             {{ end }}
                             <a href="{{ .RelPermalink }}" class="project-link read-more">Read More</a>
                         </div>
@@ -75,10 +83,18 @@
 
                         <div class="project-links">
                             {{ with .Params.github }}
-                                <a href="{{ . }}" class="project-link" target="_blank" rel="noopener">GitHub</a>
+                                <a href="{{ . }}" class="project-github-bottom" target="_blank" rel="noopener">
+                                    {{ $icon := resources.Get "icons/github.svg" }}
+                                    {{ if $icon }}{{ $icon.Content | safeHTML }}{{ end }}
+                                    GitHub
+                                </a>
                             {{ end }}
                             {{ with .Params.website }}
-                                <a href="{{ . }}" class="project-link" target="_blank" rel="noopener">Website</a>
+                                <a href="{{ . }}" class="project-website-bottom" target="_blank" rel="noopener">
+                                    {{ $icon := resources.Get "icons/link.svg" }}
+                                    {{ if $icon }}{{ $icon.Content | safeHTML }}{{ end }}
+                                    Website
+                                </a>
                             {{ end }}
                             <a href="{{ .RelPermalink }}" class="project-link read-more">Read More</a>
                         </div>
