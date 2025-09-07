@@ -36,6 +36,175 @@
     }
 }
 
+/* Enhanced Image Component System */
+.image-container {
+    margin: 1.5rem 0;
+    position: relative;
+    display: block;
+    max-width: 100%;
+}
+
+.image-wrapper {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: visible;
+}
+
+.image-wrapper img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.image-wrapper img:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] .image-wrapper img:hover {
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+/* Collapsed state (default) - reduced size with linear scaling */
+.image-wrapper.collapsed img {
+    max-width: clamp(280px, 60vw + 100px, 600px);
+}
+
+/* Expanded state - full size */
+.image-wrapper.expanded img {
+    max-width: 100%;
+}
+
+/* Full-size option - always show at full size */
+.image-wrapper.full-size img {
+    max-width: 100%;
+}
+
+.image-wrapper.full-size {
+    cursor: default;
+}
+
+.image-wrapper.full-size img:hover {
+    box-shadow: none;
+}
+
+/* No-expansion state - disable interactive elements for images that can't expand */
+.image-wrapper.no-expansion {
+    cursor: default !important;
+}
+
+.image-wrapper.no-expansion img:hover {
+    box-shadow: none !important;
+}
+
+/* Expand button */
+.expand-button {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    opacity: 0.8;
+}
+
+.expand-button:hover {
+    background: rgba(0, 0, 0, 0.9);
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+[data-theme="dark"] .expand-button {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+[data-theme="dark"] .expand-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Hide expand button for full-size images */
+.image-wrapper.full-size .expand-button {
+    display: none;
+}
+
+/* Expand icon SVG */
+.expand-icon {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s ease;
+}
+
+.image-wrapper.expanded .expand-icon {
+    transform: rotate(180deg);
+}
+
+/* Image caption */
+.image-caption {
+    margin-top: 0.75rem;
+    font-style: italic;
+    color: #666;
+    font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+    text-align: left;
+    line-height: 1.4;
+}
+
+[data-theme="dark"] .image-caption {
+    color: #aaa;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+    .expand-button {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        top: 8px;
+        left: 8px;
+    }
+
+    .expand-icon {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .image-container {
+        margin: 1rem 0;
+    }
+}
+
+/* Loading state */
+.image-wrapper.loading img {
+    opacity: 0.7;
+    filter: blur(2px);
+}
+
+.image-wrapper.loading .expand-button {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Smooth transitions for all image states */
+.image-wrapper * {
+    transition: all 0.3s ease;
+}
+
 body {
     color: var(--color-text);
     background-color: var(--color-bg);
