@@ -1,0 +1,99 @@
+{{ define "main" }}
+<h1>{{ .Title }}</h1>
+{{ .Content }}
+
+<div class="projects-container">
+
+    <div class="projects-tabs">
+        <button class="tab-button active" data-tab="current">Current Projects</button>
+        <button class="tab-button" data-tab="cemetery">Project Cemetery</button>
+    </div>
+
+    {{ $currentProjects := where .Data.Pages ".Params.status" "current" }}
+    {{ $cemeteryProjects := where .Data.Pages ".Params.status" "cemetery" }}
+
+    <div id="current-tab" class="tab-content active">
+        {{ if $currentProjects }}
+            <div class="projects-grid">
+                {{ range $currentProjects }}
+                    <article class="project-card">
+                        <div class="project-meta">
+                            <time datetime="{{ .Date | time.Format "2006-01-02T15:04:05-07:00" }}">
+                                {{ .Date.Format "January 2006" }}
+                            </time>
+                        </div>
+
+                        <h2 class="project-title">
+                            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                        </h2>
+
+                        {{ with .Summary }}
+                            <p class="project-summary">{{ . }}</p>
+                        {{ end }}
+
+                        <div class="project-links">
+                            {{ with .Params.github }}
+                                <a href="{{ . }}" class="project-link" target="_blank" rel="noopener">GitHub</a>
+                            {{ end }}
+                            {{ with .Params.website }}
+                                <a href="{{ . }}" class="project-link" target="_blank" rel="noopener">Website</a>
+                            {{ end }}
+                            <a href="{{ .RelPermalink }}" class="project-link read-more">Read More</a>
+                        </div>
+
+                        {{ if .Params.tags }}
+                            {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
+                        {{ end }}
+                    </article>
+                {{ end }}
+            </div>
+        {{ else }}
+            <div class="empty-state">
+                <p>No current projects yet.</p>
+            </div>
+        {{ end }}
+    </div>
+
+    <div id="cemetery-tab" class="tab-content">
+        {{ if $cemeteryProjects }}
+            <div class="projects-grid">
+                {{ range $cemeteryProjects }}
+                    <article class="project-card cemetery">
+                        <div class="project-meta">
+                            <time datetime="{{ .Date | time.Format "2006-01-02T15:04:05-07:00" }}">
+                                {{ .Date.Format "January 2006" }}
+                            </time>
+                        </div>
+
+                        <h2 class="project-title">
+                            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                        </h2>
+
+                        {{ with .Summary }}
+                            <p class="project-summary">{{ . }}</p>
+                        {{ end }}
+
+                        <div class="project-links">
+                            {{ with .Params.github }}
+                                <a href="{{ . }}" class="project-link" target="_blank" rel="noopener">GitHub</a>
+                            {{ end }}
+                            {{ with .Params.website }}
+                                <a href="{{ . }}" class="project-link" target="_blank" rel="noopener">Website</a>
+                            {{ end }}
+                            <a href="{{ .RelPermalink }}" class="project-link read-more">Read More</a>
+                        </div>
+
+                        {{ if .Params.tags }}
+                            {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
+                        {{ end }}
+                    </article>
+                {{ end }}
+            </div>
+        {{ else }}
+            <div class="empty-state">
+                <p>No archived projects yet.</p>
+            </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

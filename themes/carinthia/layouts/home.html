@@ -19,9 +19,10 @@ $latestBlip := index ($blips.ByDate.Reverse) 0 }}
                 class="blip-permalink-icon"
                 aria-label="Permalink"
                 title="Permalink"
-                >{{ $icon := resources.Get "icons/link.svg" }} {{ $icon.Content
-                | safeHTML }}</a
             >
+                {{ $icon := resources.Get "icons/link.svg" }} {{ $icon.Content |
+                safeHTML }}
+            </a>
         </div>
 
         <div class="blip-content">{{ $latestBlip.Content }}</div>
@@ -38,7 +39,8 @@ $latestBlip := index ($blips.ByDate.Reverse) 0 }}
 
 <hr class="section-separator" />
 
-{{ $posts := where site.RegularPages "Section" "ne" "blips" }} {{ if $posts }}
+{{ $postsNotBlips := where site.RegularPages "Section" "ne" "blips" }} {{ $posts
+:= where $postsNotBlips "Section" "ne" "projects" }} {{ if $posts }}
 <h2>LATEST ARTICLES</h2>
 <div class="post-list compact">
     {{ range $posts }}

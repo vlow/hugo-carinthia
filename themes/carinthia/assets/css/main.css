@@ -1197,3 +1197,422 @@ pre {
         width: 100%;
     }
 }
+
+/* Project Portfolio Styles */
+.projects-container {
+    max-width: 1024px;
+    margin: 0 auto;
+}
+
+/* Project Tabs */
+.projects-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border);
+    justify-content: center;
+}
+
+.tab-button {
+    padding: 1rem 1.5rem;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tab-button:hover {
+    color: var(--color-text);
+    background: var(--color-button-hover);
+}
+
+.tab-button.active {
+    color: var(--color-link);
+    border-bottom-color: var(--color-link);
+    background: transparent;
+}
+
+[data-theme="dark"] .tab-button {
+    color: #aaa;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Project Grid */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Project Cards */
+.project-card {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    background-color: var(--color-bg);
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+[data-theme="dark"] .project-card {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .project-card:hover {
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+}
+
+.project-card.cemetery {
+    opacity: 0.8;
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .project-card.cemetery {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Project Meta */
+.project-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+}
+
+.project-meta time {
+    color: #666;
+    font-family: monospace;
+}
+
+[data-theme="dark"] .project-meta time {
+    color: #aaa;
+}
+
+.project-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-current {
+    background-color: #e6f7ff;
+    color: #0066cc;
+}
+
+.status-cemetery {
+    background-color: #f5f5f5;
+    color: #666;
+}
+
+[data-theme="dark"] .status-current {
+    background-color: #1a3a5c;
+    color: #66b3ff;
+}
+
+[data-theme="dark"] .status-cemetery {
+    background-color: #2a2a2a;
+    color: #aaa;
+}
+
+/* Project Title */
+.project-title {
+    margin: 0 0 1rem 0;
+    font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.project-title a {
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.project-title a:hover {
+    color: var(--color-link);
+}
+
+/* Project Summary */
+.project-summary {
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    font-size: clamp(0.95rem, 2vw, 1.05rem);
+}
+
+[data-theme="dark"] .project-summary {
+    color: #ccc;
+}
+
+/* Project Links */
+.project-links {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.project-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.project-link:hover {
+    background-color: var(--color-button-hover);
+}
+
+.project-link.read-more {
+    background-color: var(--color-link);
+    color: white;
+    border-color: var(--color-link);
+}
+
+.project-link.read-more:hover {
+    opacity: 0.9;
+    background-color: var(--color-link);
+}
+
+/* Project Tags */
+.project-tags {
+    margin-top: 1rem;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #666;
+    font-style: italic;
+}
+
+[data-theme="dark"] .empty-state {
+    color: #aaa;
+}
+
+/* Single Project Page Styles */
+.project-single {
+    max-width: 1024px;
+    margin: 0 auto;
+}
+
+.project-header {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.project-header .project-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.project-header .project-title {
+    font-size: clamp(1.5rem, 3vw, 1.8rem);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.project-links-primary {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 0;
+}
+
+.project-link-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--color-link);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-size: clamp(0.95rem, 2vw, 1.05rem);
+}
+
+.project-link-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.project-link-primary svg {
+    width: 1.2em;
+    height: 1.2em;
+}
+
+/* Project Content */
+.project-content {
+    margin-bottom: 1rem;
+}
+
+/* Project Bottom Links */
+.project-bottom-links {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.project-github-bottom,
+.project-website-bottom {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--color-text);
+    color: var(--color-bg);
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+    border: 1px solid var(--color-text);
+}
+
+.project-github-bottom:hover,
+.project-website-bottom:hover {
+    opacity: 0.8;
+}
+
+.project-github-bottom svg,
+.project-website-bottom svg {
+    width: 1em;
+    height: 1em;
+}
+
+/* Project Navigation */
+.project-navigation {
+    margin-top: 0;
+    padding-top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.back-to-projects {
+    color: var(--color-link);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: clamp(0.95rem, 2vw, 1.05rem);
+}
+
+.back-to-projects:hover {
+    text-decoration: underline;
+}
+
+.project-nav-links {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.nav-prev,
+.nav-next {
+    color: var(--color-link);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: clamp(0.9rem, 1.8vw, 1rem);
+}
+
+.nav-prev:hover,
+.nav-next:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .project-links {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .project-link {
+        text-align: center;
+        justify-content: center;
+    }
+
+    .project-bottom-links {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .project-navigation {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .project-nav-links {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .projects-tabs {
+        flex-direction: column;
+        gap: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .tab-button {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .tab-button.active {
+        border-bottom-color: var(--color-link);
+    }
+
+    .project-card {
+        padding: 1rem;
+    }
+}

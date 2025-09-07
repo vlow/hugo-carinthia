@@ -1,0 +1,62 @@
+{{ define "main" }}
+<article class="project-single">
+    <header class="project-header">
+        <h1 class="project-title">{{ .Title }}</h1>
+
+        <div class="project-meta">
+            <time datetime="{{ .Date | time.Format "2006-01-02T15:04:05-07:00" }}">
+                {{ .Date.Format "January 2, 2006" }}
+            </time>
+            <span class="project-status {{ if eq .Params.status "current" }}status-current{{ else }}status-cemetery{{ end }}">
+                {{ if eq .Params.status "current" }}Current{{ else }}Archived{{ end }}
+            </span>
+        </div>
+    </header>
+
+    <hr class="section-separator" />
+
+    <div class="project-content">
+        {{ .Content }}
+    </div>
+
+    {{ if .Params.tags }}
+        <div class="project-tags">
+            {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
+        </div>
+    {{ end }}
+
+    {{ if or .Params.github .Params.website }}
+    <div class="project-bottom-links">
+        {{ with .Params.github }}
+            <a href="{{ . }}" class="project-github-bottom" target="_blank" rel="noopener">
+                {{ $icon := resources.Get "icons/github.svg" }}
+                {{ if $icon }}{{ $icon.Content | safeHTML }}{{ end }}
+                GitHub
+            </a>
+        {{ end }}
+        {{ with .Params.website }}
+            <a href="{{ . }}" class="project-website-bottom" target="_blank" rel="noopener">
+                {{ $icon := resources.Get "icons/link.svg" }}
+                {{ if $icon }}{{ $icon.Content | safeHTML }}{{ end }}
+                Website
+            </a>
+        {{ end }}
+    </div>
+    {{ end }}
+
+    <hr class="section-separator" />
+
+    <nav class="project-navigation">
+        <a href="/projects/" class="back-to-projects">← Back to Projects</a>
+
+        <div class="project-nav-links">
+            {{ with .PrevInSection }}
+                <a href="{{ .RelPermalink }}" class="nav-prev">← {{ .Title }}</a>
+            {{ end }}
+            {{ with .NextInSection }}
+                <a href="{{ .RelPermalink }}" class="nav-next">{{ .Title }} →</a>
+            {{ end }}
+        </div>
+    </nav>
+</article>
+{{ end }}
