@@ -1051,7 +1051,7 @@ pre {
 /* Enhanced Library Controls */
 .library-controls {
     display: flex;
-    gap: 2rem;
+    gap: 3rem;
     margin-bottom: 2rem;
     flex-wrap: wrap;
     align-items: flex-start;
@@ -1061,26 +1061,45 @@ pre {
 .library-sort {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
 }
 
-.library-sort label {
+.control-label {
     font-weight: 600;
     font-size: clamp(0.9rem, 2vw, 1rem);
+    color: var(--color-text);
 }
 
-.library-sort select {
-    padding: 0.5rem 0.75rem;
+.button-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toggle-btn {
+    padding: 0.5rem 1rem;
     border: 1px solid var(--color-border);
-    background-color: var(--color-button-bg);
+    background-color: transparent;
     color: var(--color-text);
     border-radius: 4px;
-    font-size: clamp(0.9rem, 2vw, 1rem);
+    font-size: clamp(0.85rem, 1.8vw, 0.95rem);
     cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    font-weight: 500;
 }
 
-.library-sort select:hover {
-    background-color: var(--color-button-hover);
+.toggle-btn:hover {
+    background-color: var(--color-button-bg);
+}
+
+.toggle-btn.active {
+    background-color: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+}
+
+.toggle-btn.active:hover {
+    opacity: 0.9;
 }
 
 /* Library Content Container */

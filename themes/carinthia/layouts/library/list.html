@@ -5,20 +5,20 @@
 {{ if .Pages }}
 <div class="library-controls">
     <div class="library-filter">
-        <label for="category-filter">Filter by category:</label>
-        <select id="category-filter">
-            <option value="all">All Books</option>
-            <option value="fiction">Fiction</option>
-            <option value="non-fiction">Non-Fiction</option>
-        </select>
+        <span class="control-label">Category:</span>
+        <div class="button-group" data-control="category">
+            <button class="toggle-btn active" data-value="all">All</button>
+            <button class="toggle-btn" data-value="fiction">Fiction</button>
+            <button class="toggle-btn" data-value="non-fiction">Non-Fiction</button>
+        </div>
     </div>
 
     <div class="library-sort">
-        <label for="sort-method">Sort by:</label>
-        <select id="sort-method">
-            <option value="read-date">Read Date</option>
-            <option value="alphabetical">Alphabetical</option>
-        </select>
+        <span class="control-label">Sort:</span>
+        <div class="button-group" data-control="sort">
+            <button class="toggle-btn active" data-value="read-date">Read Date</button>
+            <button class="toggle-btn" data-value="alphabetical">A-Z</button>
+        </div>
     </div>
 </div>
 
@@ -78,10 +78,11 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const categoryFilter = document.getElementById('category-filter');
-    const sortMethod = document.getElementById('sort-method');
     const libraryContent = document.querySelector('.library-content');
     const cards = Array.from(document.querySelectorAll('.library-card'));
+
+    let currentCategory = 'all';
+    let currentSort = 'read-date';
 
     function createSectionHeader(text, id) {
         const header = document.createElement('h2');
@@ -108,16 +109,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getFilteredCards() {
-        const selectedCategory = categoryFilter.value;
         return cards.filter(card => {
             const cardCategory = card.getAttribute('data-category');
-            return selectedCategory === 'all' || selectedCategory === cardCategory;
+            return currentCategory === 'all' || currentCategory === cardCategory;
         });
     }
 
     function sortAndDisplayCards() {
         const filteredCards = getFilteredCards();
-        const sortValue = sortMethod.value;
 
         clearLibrary();
 
@@ -128,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        if (sortValue === 'alphabetical') {
+        if (currentSort === 'alphabetical') {
             // Sort alphabetically and group by first letter
             const sortedCards = filteredCards.sort((a, b) =>
                 a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'))
@@ -194,12 +193,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Initial display
-    sortAndDisplayCards();
+    function handleButtonClick(e) {
+        if (!e.target.classList.contains('toggle-btn')) return;
+
+        const buttonGroup = e.target.parentElement;
+        const controlType = buttonGroup.getAttribute('data-control');
+        const value = e.target.getAttribute('data-value');
+
+        // Remove active class from siblings
+        buttonGroup.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Add active class to clicked button
+        e.target.classList.add('active');
+
+        // Update state
+        if (controlType === 'category') {
+            currentCategory = value;
+        } else if (controlType === 'sort') {
+            currentSort = value;
+        }
+
+        // Re-render
+        sortAndDisplayCards();
+    }
 
     // Event listeners
-    categoryFilter.addEventListener('change', sortAndDisplayCards);
-    sortMethod.addEventListener('change', sortAndDisplayCards);
+    document.addEventListener('click', handleButtonClick);
+
+    // Initial display
+    sortAndDisplayCards();
 });
 </script>
 
