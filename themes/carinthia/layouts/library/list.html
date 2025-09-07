@@ -1,0 +1,88 @@
+{{ define "main" }}
+<h1>{{ .Title }}</h1>
+{{ .Content }}
+
+{{ if .Pages }}
+<div class="library-filter">
+    <label for="category-filter">Filter by category:</label>
+    <select id="category-filter">
+        <option value="all">All Books</option>
+        <option value="fiction">Fiction</option>
+        <option value="non-fiction">Non-Fiction</option>
+    </select>
+</div>
+
+<div class="library-cards">
+    {{ range .Pages.ByDate.Reverse }}
+    <article class="library-card" data-category="{{ .Params.category | default "uncategorized" }}">
+        <a href="{{ .RelPermalink }}" class="card-link">
+            {{ if .Params.cover_image }}
+            <div class="card-image">
+                <img src="{{ .Params.cover_image | relURL }}" alt="Cover of {{ .Title }}" loading="lazy">
+            </div>
+            {{ else }}
+            <div class="card-image card-image-placeholder">
+                <div class="placeholder-content">
+                    <span>{{ .Title }}</span>
+                </div>
+            </div>
+            {{ end }}
+
+            <div class="card-content">
+                <h3 class="card-title">{{ .Title }}</h3>
+
+                <div class="card-meta">
+                    {{ if .Params.finished_date }}
+                    {{ $dateHuman := .Params.finished_date | time.Format ":date_long" }}
+                    <div class="meta-item">
+                        <strong>Finished:</strong> {{ $dateHuman }}
+                    </div>
+                    {{ end }}
+
+                    {{ if .Params.category }}
+                    <div class="meta-item">
+                        <span class="category-badge category-{{ .Params.category }}">{{ .Params.category | title }}</span>
+                    </div>
+                    {{ end }}
+
+                    {{ if .Params.pages }}
+                    <div class="meta-item">
+                        {{ .Params.pages }} pages
+                    </div>
+                    {{ end }}
+                </div>
+
+                {{ if .Params.summary }}
+                <p class="card-summary">{{ .Params.summary }}</p>
+                {{ end }}
+            </div>
+        </a>
+    </article>
+    {{ end }}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filter = document.getElementById('category-filter');
+    const cards = document.querySelectorAll('.library-card');
+
+    filter.addEventListener('change', function() {
+        const selectedCategory = this.value;
+
+        cards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+
+            if (selectedCategory === 'all' || selectedCategory === cardCategory) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+
+{{ else }}
+<p>No books in the library yet.</p>
+{{ end }}
+{{ end }}

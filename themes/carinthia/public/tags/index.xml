@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Carinthia Theme Test</title>
+    <link>http://localhost:1314/tags/</link>
+    <description>Recent content in Tags on Carinthia Theme Test</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 10 Feb 2024 14:20:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1314/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Anthropology</title>
+      <link>http://localhost:1314/tags/anthropology/</link>
+      <pubDate>Sat, 10 Feb 2024 14:20:00 +0000</pubDate>
+      <guid>http://localhost:1314/tags/anthropology/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Evolution</title>
+      <link>http://localhost:1314/tags/evolution/</link>
+      <pubDate>Sat, 10 Feb 2024 14:20:00 +0000</pubDate>
+      <guid>http://localhost:1314/tags/evolution/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>History</title>
+      <link>http://localhost:1314/tags/history/</link>
+      <pubDate>Sat, 10 Feb 2024 14:20:00 +0000</pubDate>
+      <guid>http://localhost:1314/tags/history/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Classic</title>
+      <link>http://localhost:1314/tags/classic/</link>
+      <pubDate>Mon, 15 Jan 2024 10:30:00 +0000</pubDate>
+      <guid>http://localhost:1314/tags/classic/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Science-Fiction</title>
+      <link>http://localhost:1314/tags/science-fiction/</link>
+      <pubDate>Mon, 15 Jan 2024 10:30:00 +0000</pubDate>
+      <guid>http://localhost:1314/tags/science-fiction/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Space-Opera</title>
+      <link>http://localhost:1314/tags/space-opera/</link>
+      <pubDate>Mon, 15 Jan 2024 10:30:00 +0000</pubDate>
+      <guid>http://localhost:1314/tags/space-opera/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>

@@ -3,7 +3,7 @@
     --color-text: #222222;
     --color-border: #222222;
     --color-link: #0000ee;
-    --color-button-bg: #fff;
+    --color-button-bg: #f0f0f0;
     --color-button-hover: #e0e0e0;
 }
 
@@ -12,7 +12,7 @@
     --color-text: #222222;
     --color-border: #222222;
     --color-link: #0000ee;
-    --color-button-bg: #fff;
+    --color-button-bg: #f0f0f0;
     --color-button-hover: #e0e0e0;
 }
 
@@ -348,7 +348,7 @@ a {
     width: 40px;
     height: 40px;
     padding: 0;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border);
     background-color: var(--color-button-bg);
     color: var(--color-text);
     cursor: pointer;
@@ -696,32 +696,29 @@ pre {
 }
 
 .library-card {
-    flex: 0 0 218px;
-    width: 218px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    flex: 1 1 calc(25% - 1.125rem);
+    min-width: 240px;
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     overflow: hidden;
     background-color: var(--color-bg);
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .library-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 [data-theme="dark"] .library-card:hover {
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
 }
 
 .card-image {
     width: 100%;
-    height: 327px;
+    height: 300px;
     overflow: hidden;
     position: relative;
-    border-radius: 8px 8px 0 0;
-    margin: 0;
 }
 
 .card-image img {
@@ -729,19 +726,13 @@ pre {
     height: 100%;
     object-fit: cover;
     display: block;
-    border-radius: 8px 8px 0 0;
 }
 
 .card-image-placeholder {
-    background: linear-gradient(
-        135deg,
-        var(--color-button-bg),
-        var(--color-button-hover)
-    );
+    background: linear-gradient(135deg, var(--color-button-bg), var(--color-button-hover));
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px 8px 0 0;
 }
 
 .placeholder-content {
@@ -754,14 +745,14 @@ pre {
 }
 
 .card-content {
-    padding: 0.75rem;
+    padding: 1rem;
 }
 
 .card-title {
-    margin: 0 0 0.5rem 0;
-    font-size: clamp(0.95rem, 2vw, 1.1rem);
+    margin: 0 0 0.75rem 0;
+    font-size: clamp(1.1rem, 2.2vw, 1.25rem);
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.3;
 }
 
 .card-title a {
@@ -774,12 +765,12 @@ pre {
 }
 
 .card-meta {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .card-meta .meta-item {
-    margin-bottom: 0.2rem;
-    font-size: clamp(0.75rem, 1.6vw, 0.85rem);
+    margin-bottom: 0.25rem;
+    font-size: clamp(0.85rem, 1.8vw, 0.95rem);
     color: #666;
 }
 
@@ -789,9 +780,9 @@ pre {
 
 .category-badge {
     display: inline-block;
-    padding: 0.2rem 0.4rem;
-    border-radius: 3px;
-    font-size: clamp(0.65rem, 1.3vw, 0.75rem);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: clamp(0.75rem, 1.5vw, 0.85rem);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -818,33 +809,10 @@ pre {
 }
 
 .card-summary {
-    font-size: clamp(0.8rem, 1.8vw, 0.9rem);
-    line-height: 1.3;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    line-height: 1.4;
     color: #666;
     margin: 0;
-}
-
-/* Override image-container margin in library cards */
-.library-card .image-container {
-    margin: 0 0 1.5rem 0;
-}
-
-/* Dark theme border for library cards */
-[data-theme="dark"] .library-card {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Card link styling */
-.card-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    height: 100%;
-    cursor: pointer;
-}
-
-.card-link * {
-    cursor: pointer;
 }
 
 [data-theme="dark"] .card-summary {
@@ -854,8 +822,8 @@ pre {
 /* Responsive adjustments for library cards */
 @media (max-width: 768px) {
     .library-card {
-        flex: 0 0 200px;
-        width: 200px;
+        flex: 1 1 calc(50% - 0.75rem);
+        min-width: 200px;
     }
 
     .library-cards {
@@ -865,12 +833,12 @@ pre {
 
 @media (max-width: 480px) {
     .library-card {
-        flex: 0 0 100%;
-        width: 100%;
+        flex: 1 1 100%;
+        min-width: auto;
     }
 
     .card-image {
-        height: 200px;
+        height: 250px;
     }
 }
 

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>
+    Dune | Carinthia Theme Test
+</title>
+<script>
+    (function () {
+        const THEME_KEY = "theme-preference";
+        const themes = ["system", "light", "dark"];
+
+        function getThemePreference() {
+            const stored = localStorage.getItem(THEME_KEY);
+            if (stored && themes.includes(stored)) {
+                return stored;
+            }
+            return "system";
+        }
+
+        const theme = getThemePreference();
+        document.documentElement.setAttribute("data-theme", theme);
+    })();
+</script>
+
+<link rel="stylesheet" href="/css/main.css" /> 
+<link rel="stylesheet" href="/css/syntax-light.css" id="syntax-light" disabled />
+<link rel="stylesheet" href="/css/syntax-dark.css" id="syntax-dark" disabled />
+ 
+      <script src="/js/main.js"></script>
+ 
+
+</head>
+<body>
+  <header>
+    <div class="header-top">
+    <div class="site-branding">
+        <h1 class="site-title">Carinthia Theme Test</h1>
+        
+    </div>
+    <button
+    id="theme-switcher"
+    class="theme-switcher"
+    aria-label="Switch theme"
+    type="button"
+>
+    
+    <svg
+        class="theme-icon theme-icon-system"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        
+        <g class="system-sun">
+            <circle
+                cx="12"
+                cy="12"
+                r="4"
+                stroke="currentColor"
+                stroke-width="2"
+                opacity="0.3"
+            />
+            <path
+                d="M12 2V6M12 18V22M4.22 4.22L6.34 6.34M17.66 17.66L19.78 19.78M2 12H6M18 12H22M4.22 19.78L6.34 17.66M17.66 6.34L19.78 4.22"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                opacity="0.3"
+            />
+        </g>
+        
+        <path
+            class="system-moon"
+            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            opacity="0.3"
+            style="display: none"
+        />
+        
+        <text
+            x="12"
+            y="22"
+            font-size="16"
+            font-weight="bold"
+            fill="currentColor"
+        >
+            A
+        </text>
+    </svg>
+
+    
+    <svg
+        class="theme-icon theme-icon-light"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" />
+        <path
+            d="M12 2V6M12 18V22M4.22 4.22L6.34 6.34M17.66 17.66L19.78 19.78M2 12H6M18 12H22M4.22 19.78L6.34 17.66M17.66 6.34L19.78 4.22"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+        />
+    </svg>
+
+    
+    <svg
+        class="theme-icon theme-icon-dark"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <path
+            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+    </svg>
+</button>
+
+</div>
+<div class="header-menu">
+    
+  <nav>
+    <ul>
+    <li>
+      <a href="/">Home</a>
+    </li>
+    <li>
+      <a href="/posts/">Posts</a>
+    </li>
+    <li>
+      <a href="/library/">Library</a>
+    </li>
+    <li>
+      <a href="/tags/">Tags</a>
+    </li>
+    </ul>
+  </nav>
+
+</div>
+
+  </header>
+  <main>
+    
+<div class="library-single">
+    <h1>Dune</h1>
+
+    <div class="library-meta">
+        
+        
+        
+        <div class="meta-item">
+            <strong>Finished:</strong> <time datetime="2024-01-15T10:30:00&#43;00:00">January 15, 2024</time>
+        </div>
+        
+
+        
+        <div class="meta-item">
+            <strong>Category:</strong> <span class="category-fiction">Fiction</span>
+        </div>
+        
+
+        
+        <div class="meta-item">
+            <strong>Pages:</strong> 688
+        </div>
+        
+
+        
+        <div class="meta-item">
+            <strong>Reading Time:</strong> 3 weeks
+        </div>
+        
+
+        
+        <div class="meta-item">
+            <strong>ISBN:</strong> 978-0441013593
+        </div>
+        
+    </div>
+
+    
+    <div class="library-summary">
+        <h3>Summary</h3>
+        <p>Epic science fiction novel about politics, religion, and ecology on the desert planet Arrakis.</p>
+    </div>
+    
+
+    <h2 id="about-dune">About Dune</h2>
+<p>Frank Herbert&rsquo;s masterpiece is a complex tale of politics, religion, and ecology set in a far future where noble houses fight for control of the desert planet Arrakis, the only source of the universe&rsquo;s most valuable substance - the spice melange.</p>
+<p>The story follows Paul Atreides as his family accepts stewardship of Arrakis, only to be betrayed by their enemies. Paul must survive in the harsh desert and potentially fulfill an ancient prophecy.</p>
+<h2 id="my-thoughts">My Thoughts</h2>
+<p>This book is incredibly dense and rich in world-building. Herbert created an entire universe with its own politics, religions, and ecological systems. The attention to detail is remarkable, though it can be overwhelming at times.</p>
+<p>The themes of environmental conservation, the dangers of messianic leadership, and the corruption of power are as relevant today as they were when the book was written in 1965.</p>
+
+
+    
+  <div class="hashtag-cloud">
+      <a href="/tags/science-fiction/" class="hashtag">#Science-Fiction</a>
+      <a href="/tags/classic/" class="hashtag">#Classic</a>
+      <a href="/tags/space-opera/" class="hashtag">#Space-Opera</a>
+  </div>
+
+
+    <div class="library-navigation">
+        <a href="/library">&larr; View all Books...</a>
+    </div>
+</div>
+
+  </main>
+  <footer>
+    
+
+
+<p class="copyright">Copyright 2025. All rights reserved.</p>
+
+  </footer>
+</body>
+</html>

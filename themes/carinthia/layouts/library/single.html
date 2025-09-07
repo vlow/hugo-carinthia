@@ -1,0 +1,54 @@
+{{ define "main" }}
+<div class="library-single">
+    <h1>{{ .Title }}</h1>
+
+    <div class="library-meta">
+        {{ if .Params.finished_date }}
+        {{ $dateMachine := .Params.finished_date | time.Format "2006-01-02T15:04:05-07:00" }}
+        {{ $dateHuman := .Params.finished_date | time.Format ":date_long" }}
+        <div class="meta-item">
+            <strong>Finished:</strong> <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+        </div>
+        {{ end }}
+
+        {{ if .Params.category }}
+        <div class="meta-item">
+            <strong>Category:</strong> <span class="category-{{ .Params.category }}">{{ .Params.category | title }}</span>
+        </div>
+        {{ end }}
+
+        {{ if .Params.pages }}
+        <div class="meta-item">
+            <strong>Pages:</strong> {{ .Params.pages }}
+        </div>
+        {{ end }}
+
+        {{ if .Params.average_reading_time }}
+        <div class="meta-item">
+            <strong>Reading Time:</strong> {{ .Params.average_reading_time }}
+        </div>
+        {{ end }}
+
+        {{ if .Params.isbn }}
+        <div class="meta-item">
+            <strong>ISBN:</strong> {{ .Params.isbn }}
+        </div>
+        {{ end }}
+    </div>
+
+    {{ if .Params.summary }}
+    <div class="library-summary">
+        <h3>Summary</h3>
+        <p>{{ .Params.summary }}</p>
+    </div>
+    {{ end }}
+
+    {{ .Content }}
+
+    {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
+
+    <div class="library-navigation">
+        <a href="{{ "library" | relURL }}">&larr; View all Books...</a>
+    </div>
+</div>
+{{ end }}
