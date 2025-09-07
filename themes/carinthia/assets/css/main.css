@@ -1,3 +1,30 @@
+/* ========================================================================
+   CARINTHIA THEME SYSTEM
+   ========================================================================
+
+   This theme implements a three-tier color system:
+   1. System/Auto theme (default) - respects user's OS preference
+   2. Explicit Light theme - forces light mode
+   3. Explicit Dark theme - forces dark mode
+
+   The theme is controlled by the data-theme attribute on the <html> element:
+   - data-theme="system" or no attribute: Uses OS preference
+   - data-theme="light": Forces light theme
+   - data-theme="dark": Forces dark theme
+
+   KEY ARCHITECTURAL DECISION:
+   We use `:root:not([data-theme="light"])` selectors within media queries
+   instead of simple `:root` selectors. This ensures that:
+
+   1. System dark mode applies when OS prefers dark AND user hasn't explicitly chosen light
+   2. System dark mode styling is identical to explicit dark mode styling
+   3. User's explicit choice always takes precedence over system preference
+
+   Without the :not() selector, system preference would override explicit choices,
+   creating visual inconsistencies between "auto dark" and "explicit dark" modes.
+   ======================================================================== */
+
+/* Default theme (light) - applies when no explicit theme is set */
 :root {
     --color-bg: #ffffff;
     --color-text: #222222;
@@ -7,6 +34,7 @@
     --color-button-hover: #e0e0e0;
 }
 
+/* Explicit light theme - identical to default */
 [data-theme="light"] {
     --color-bg: #ffffff;
     --color-text: #222222;
@@ -16,6 +44,7 @@
     --color-button-hover: #e0e0e0;
 }
 
+/* Explicit dark theme */
 [data-theme="dark"] {
     --color-bg: #1a1a1a;
     --color-text: #e0e0e0;
@@ -25,6 +54,14 @@
     --color-button-hover: #3a3a3a;
 }
 
+/* System preference dark theme
+   Only applies when:
+   - OS/browser prefers dark mode (prefers-color-scheme: dark)
+   - AND user hasn't explicitly chosen light theme (:not([data-theme="light"]))
+
+   This includes data-theme="system", data-theme="dark", and no data-theme attribute.
+   The pattern ensures system dark mode looks identical to explicit dark mode.
+*/
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
         --color-bg: #1a1a1a;
@@ -33,6 +70,167 @@
         --color-link: #66b3ff;
         --color-button-bg: #2a2a2a;
         --color-button-hover: #3a3a3a;
+    }
+
+    /* ====================================================================
+       COMPONENT-SPECIFIC SYSTEM DARK MODE STYLES
+       ====================================================================
+
+       All styles below use the same `:root:not([data-theme="light"])` pattern
+       to ensure system dark mode matches explicit dark mode exactly.
+
+       These styles override component-specific properties that can't be
+       handled by CSS custom properties alone, such as:
+       - Box shadows with specific rgba values
+       - Complex gradients
+       - Component-specific color states
+       - Border colors that need specific transparency
+
+       Each selector ensures visual consistency between:
+       - data-theme="dark" (explicit dark)
+       - data-theme="system" with OS dark preference (system dark)
+       - No data-theme attribute with OS dark preference (default system dark)
+       ==================================================================== */
+
+    /* Image components */
+    :root:not([data-theme="light"]) .image-wrapper img:hover {
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+
+    :root:not([data-theme="light"]) .expand-button {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+
+    :root:not([data-theme="light"]) .expand-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    :root:not([data-theme="light"]) .image-caption {
+        color: #aaa;
+    }
+
+    /* Post and content elements */
+    :root:not([data-theme="light"]) .post-item {
+        border-bottom-color: #333;
+    }
+
+    :root:not([data-theme="light"]) .post-summary {
+        color: #ccc;
+    }
+
+    :root:not([data-theme="light"]) .post-date {
+        color: #aaa;
+    }
+
+    :root:not([data-theme="light"]) .hashtag {
+        color: #999;
+    }
+
+    :root:not([data-theme="light"]) .hashtag:hover {
+        color: var(--color-link);
+    }
+
+    :root:not([data-theme="light"]) .post-meta {
+        color: #999;
+    }
+
+    :root:not([data-theme="light"]) .site-subtitle {
+        color: #ccc;
+    }
+
+    :root:not([data-theme="light"]) .section-separator {
+        background-color: #444;
+    }
+
+    /* Library components */
+    :root:not([data-theme="light"]) .library-card:hover {
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+
+    :root:not([data-theme="light"]) .library-card {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    :root:not([data-theme="light"]) .card-meta .meta-item {
+        color: #aaa;
+    }
+
+    :root:not([data-theme="light"]) .card-summary {
+        color: #ccc;
+    }
+
+    :root:not([data-theme="light"]) .category-fiction {
+        background-color: #1a3a5c;
+        color: #66b3ff;
+    }
+
+    :root:not([data-theme="light"]) .category-non-fiction {
+        background-color: #5c3a1a;
+        color: #ffaa66;
+    }
+
+    :root:not([data-theme="light"]) .library-banner {
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+
+    :root:not([data-theme="light"]) .isbn {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    :root:not([data-theme="light"]) .isbn-copy-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #ccc;
+    }
+
+    :root:not([data-theme="light"]) .isbn-copy-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+    }
+
+    /* Tag cloud elements */
+    :root:not([data-theme="light"]) .tag-cloud-item:hover {
+        color: var(--color-link);
+    }
+
+    /* Project components */
+    :root:not([data-theme="light"]) .tab-button {
+        color: #aaa;
+    }
+
+    :root:not([data-theme="light"]) .project-card {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    :root:not([data-theme="light"]) .project-card:hover {
+        box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+    }
+
+    :root:not([data-theme="light"]) .project-card.cemetery {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    :root:not([data-theme="light"]) .project-meta time {
+        color: #aaa;
+    }
+
+    :root:not([data-theme="light"]) .status-current {
+        background-color: #1a3a5c;
+        color: #66b3ff;
+    }
+
+    :root:not([data-theme="light"]) .status-cemetery {
+        background-color: #2a2a2a;
+        color: #aaa;
+    }
+
+    :root:not([data-theme="light"]) .project-summary {
+        color: #ccc;
+    }
+    /* Empty State */
+    :root:not([data-theme="light"]) .empty-state {
+        color: #aaa;
     }
 }
 

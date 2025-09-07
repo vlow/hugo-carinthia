@@ -107,6 +107,99 @@ hugo list drafts
 - **Example clamp usage**: `font-size: clamp(1rem, 2.5vw, 1.5rem);` (min: 1rem, preferred: 2.5vw, max: 1.5rem)
 - **Maintain visual hierarchy**: Ensure new font-size classes fit within the established typographic scale
 
+### Theme System Guidelines
+
+#### Architecture Overview
+This theme implements a sophisticated three-tier color system:
+1. **System/Auto theme** (default) - respects user's OS preference
+2. **Explicit Light theme** - forces light mode regardless of OS preference
+3. **Explicit Dark theme** - forces dark mode regardless of OS preference
+
+#### Critical Pattern: `:root:not([data-theme="light"])` Selectors
+
+**IMPORTANT**: When adding new component styles that need dark mode variants, you MUST follow the established pattern to maintain theme consistency.
+
+**For any new dark-mode styles, use this pattern:**
+
+```css
+/* Standard explicit dark theme styles */
+[data-theme="dark"] .your-component {
+    /* dark mode styles here */
+}
+
+/* System preference dark mode styles - CRITICAL PATTERN */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .your-component {
+        /* identical styles to explicit dark theme */
+    }
+}
+```
+
+#### Why This Pattern is Essential
+
+**Problem**: Without the `:root:not([data-theme="light"])` pattern, system dark mode and explicit dark mode can have visual inconsistencies.
+
+**Solution**: The `:root:not([data-theme="light"])` selector ensures that:
+- System dark mode applies when OS prefers dark AND user hasn't explicitly chosen light
+- System dark mode styling is identical to explicit dark mode styling
+- User's explicit light choice always takes precedence over system preference
+
+#### Implementation Rules
+
+1. **Always add both selectors** when creating dark mode styles:
+   - `[data-theme="dark"]` for explicit dark mode
+   - `:root:not([data-theme="light"])` within `@media (prefers-color-scheme: dark)` for system dark mode
+
+2. **Keep styles identical** between both selectors to ensure visual consistency
+
+3. **Use CSS custom properties** from the theme system whenever possible:
+   - `var(--color-bg)` for background colors
+   - `var(--color-text)` for text colors
+   - `var(--color-border)` for borders
+   - `var(--color-link)` for links
+   - `var(--color-button-bg)` and `var(--color-button-hover)` for buttons
+
+4. **Component-specific overrides** should follow the pattern when CSS custom properties aren't sufficient:
+   - Box shadows with specific rgba values
+   - Complex gradients or transparency effects
+   - Component-specific color states
+   - Border colors that need specific transparency
+
+#### Example Implementation
+
+```css
+/* Component base styles */
+.project-card {
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+}
+
+/* Explicit dark theme - component-specific styles */
+[data-theme="dark"] .project-card {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+/* System dark theme - identical styles */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .project-card {
+        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+}
+```
+
+#### Testing Theme Consistency
+
+When implementing new components, always test in all three theme modes:
+1. **System theme with OS light preference**
+2. **System theme with OS dark preference**
+3. **Explicit light theme**
+4. **Explicit dark theme**
+
+Ensure that modes 2 and 4 (system dark and explicit dark) are visually identical.
+
 ### Content Organization
 - Use front matter for metadata (title, date, draft, tags, categories)
 - Follow Hugo's content organization conventions
