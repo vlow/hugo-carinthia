@@ -1,0 +1,46 @@
+<svg width="1024" height="200" viewBox="0 0 1024 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gatsby-banner" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#FFA500;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#FF6347;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DC143C;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="gatsby-radial" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.4);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:1" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1024" height="200" fill="url(#gatsby-banner)"/>
+
+  <g transform="translate(700,100)">
+    <circle cx="0" cy="0" r="120" fill="url(#gatsby-radial)"/>
+    <g stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none">
+      <line x1="0" y1="0" x2="0" y2="-80"/>
+      <line x1="0" y1="0" x2="60" y2="-60"/>
+      <line x1="0" y1="0" x2="80" y2="0"/>
+      <line x1="0" y1="0" x2="60" y2="60"/>
+      <line x1="0" y1="0" x2="0" y2="80"/>
+      <line x1="0" y1="0" x2="-60" y2="60"/>
+      <line x1="0" y1="0" x2="-80" y2="0"/>
+      <line x1="0" y1="0" x2="-60" y2="-60"/>
+    </g>
+  </g>
+
+  <g fill="rgba(255,255,255,0.3)">
+    <polygon points="100,50 150,25 200,50 150,75"/>
+    <polygon points="250,80 300,55 350,80 300,105"/>
+    <polygon points="400,40 450,15 500,40 450,65"/>
+  </g>
+
+  <text x="60" y="80" font-family="serif" font-size="42" font-weight="bold" fill="white">THE GREAT</text>
+  <text x="60" y="120" font-family="serif" font-size="42" font-weight="bold" fill="white">GATSBY</text>
+  <text x="60" y="145" font-family="serif" font-size="20" fill="rgba(255,255,255,0.9)">F. SCOTT FITZGERALD</text>
+
+  <g transform="translate(950,100)">
+    <circle cx="0" cy="0" r="15" fill="#00FF7F" opacity="0.8"/>
+    <circle cx="0" cy="0" r="25" fill="none" stroke="#00FF7F" stroke-width="2" opacity="0.6"/>
+    <circle cx="0" cy="0" r="35" fill="none" stroke="#00FF7F" stroke-width="1" opacity="0.4"/>
+  </g>
+</svg>

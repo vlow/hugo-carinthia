@@ -10,6 +10,7 @@ isbn = '978-0735211292'
 summary = 'James Clear provides a proven framework for improving every day through the power of small habits.'
 tags = ['self-improvement', 'productivity', 'psychology']
 cover_image = '/images/covers/atomic-habits-cover.svg'
+banner = '/images/banners/atomic-habits-banner.svg'
 +++
 
 ## About Atomic Habits

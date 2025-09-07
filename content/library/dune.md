@@ -10,6 +10,7 @@ isbn = '978-0441013593'
 summary = 'Epic science fiction novel about politics, religion, and ecology on the desert planet Arrakis.'
 tags = ['science-fiction', 'classic', 'space-opera']
 cover_image = '/images/covers/dune-cover.svg'
+banner = '/images/banners/dune-banner.svg'
 +++
 
 ## About Dune

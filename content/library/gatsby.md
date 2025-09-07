@@ -10,6 +10,7 @@ isbn = '978-0743273565'
 summary = 'Fitzgeralds masterpiece about the American Dream, love, and the decadence of the Jazz Age.'
 tags = ['classic', 'american-literature', 'jazz-age']
 cover_image = '/images/covers/gatsby-cover.svg'
+banner = '/images/banners/gatsby-banner.svg'
 +++
 
 ## About The Great Gatsby

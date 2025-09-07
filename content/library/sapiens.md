@@ -10,6 +10,7 @@ isbn = '978-0062316097'
 summary = 'Harari explores how Homo sapiens came to dominate the world through three major revolutions.'
 tags = ['history', 'anthropology', 'evolution']
 cover_image = '/images/covers/sapiens-cover.svg'
+banner = '/images/banners/sapiens-banner.svg'
 +++
 
 ## About Sapiens

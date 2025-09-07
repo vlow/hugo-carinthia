@@ -1,6 +1,12 @@
 {{ define "main" }}
+{{ if .Params.banner }}
+<div class="library-banner">
+    <img src="{{ .Params.banner | relURL }}" alt="Banner for {{ .Title }}" />
+</div>
+{{ end }}
+
 <div class="library-single">
-    <h1>{{ .Title }}</h1>
+    <h1 class="sr-only">{{ .Title }}</h1>
 
     <div class="library-meta">
         {{ if .Params.finished_date }}

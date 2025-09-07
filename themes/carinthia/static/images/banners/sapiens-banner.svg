@@ -1,0 +1,31 @@
+<svg width="1024" height="200" viewBox="0 0 1024 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sapiens-banner" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1E3A8A;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#60A5FA;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1024" height="200" fill="url(#sapiens-banner)"/>
+
+  <g opacity="0.3">
+    <polygon points="100,60 140,40 180,60 140,80" fill="white"/>
+    <polygon points="200,80 240,60 280,80 240,100" fill="white"/>
+    <polygon points="300,50 340,30 380,50 340,70" fill="white"/>
+    <polygon points="700,70 740,50 780,70 740,90" fill="white"/>
+    <polygon points="820,40 860,20 900,40 860,60" fill="white"/>
+  </g>
+
+  <text x="60" y="80" font-family="sans-serif" font-size="36" font-weight="bold" fill="white">SAPIENS</text>
+  <text x="60" y="105" font-family="sans-serif" font-size="16" fill="rgba(255,255,255,0.9)">A Brief History of Humankind</text>
+  <text x="60" y="130" font-family="sans-serif" font-size="20" fill="white">YUVAL NOAH HARARI</text>
+
+  <g transform="translate(500,120)">
+    <ellipse cx="50" cy="20" rx="20" ry="30" fill="rgba(255,255,255,0.4)"/>
+    <ellipse cx="120" cy="15" rx="20" ry="35" fill="rgba(255,255,255,0.5)"/>
+    <ellipse cx="190" cy="10" rx="20" ry="40" fill="rgba(255,255,255,0.6)"/>
+    <ellipse cx="260" cy="5" rx="20" ry="45" fill="rgba(255,255,255,0.7)"/>
+    <ellipse cx="330" cy="0" rx="20" ry="50" fill="rgba(255,255,255,0.8)"/>
+  </g>
+</svg>
