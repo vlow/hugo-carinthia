@@ -1,5 +1,35 @@
 {{ define "main" }}
 <h1>{{ .Title }}</h1>
-{{ .Content }} {{ range .Pages }}
-<h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
-{{ .Summary | plainify | truncate 160 }} {{ end }} {{ end }}
+{{ .Content }}
+
+<div class="post-list">
+    {{ range .Pages }}
+    <div class="post-item">
+        <div class="post-item-main">
+            <h2 class="post-item-title">
+                <a href="{{ .RelPermalink }}" class="post-title"
+                    >{{ .LinkTitle }}</a
+                >
+            </h2>
+            <div class="post-meta">
+                {{ $dateMachine := .Date | time.Format
+                "2006-01-02T15:04:05-07:00" }} {{ $dateHuman := .Date |
+                time.Format "2006-01-02" }}
+                <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+
+                <span class="meta-separator">•</span>
+                <span class="word-count">{{ .WordCount }} words</span>
+
+                <span class="meta-separator">•</span>
+                <span class="reading-time">{{ .ReadingTime }} min read</span>
+            </div>
+            {{ if .Summary }}
+            <div class="post-summary">
+                {{ .Summary | plainify | truncate 200 }}
+            </div>
+            {{ end }}
+        </div>
+    </div>
+    {{ end }}
+</div>
+{{ end }}

@@ -39,12 +39,16 @@ $latestBlip := index ($blips.ByDate.Reverse) 0 }}
 <hr class="section-separator" />
 
 {{ $posts := where site.RegularPages "Section" "ne" "blips" }} {{ if $posts }}
-<h2>LATEST POSTS</h2>
-<div class="post-list">
+<h2>LATEST ARTICLES</h2>
+<div class="post-list compact">
     {{ range $posts }}
     <div class="post-item">
-        <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
-        <a href="{{ .RelPermalink }}" class="post-title">{{ .LinkTitle }}</a>
+        <div class="post-item-main">
+            <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
+            <a href="{{ .RelPermalink }}" class="post-title"
+                >{{ .LinkTitle }}</a
+            >
+        </div>
     </div>
     {{ end }}
 </div>
