@@ -974,6 +974,12 @@ pre {
     font-weight: 400;
 }
 
+.isbn-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .isbn {
     font-family:
         "SF Mono", "Monaco", "Cascadia Code", "Roboto Mono", Consolas,
@@ -987,6 +993,44 @@ pre {
 
 [data-theme="dark"] .isbn {
     background: rgba(255, 255, 255, 0.1);
+}
+
+.isbn-copy-btn {
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 0.25rem;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.isbn-copy-btn:hover {
+    background: rgba(0, 0, 0, 0.15);
+    color: #333;
+}
+
+.isbn-copy-btn.copied {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+[data-theme="dark"] .isbn-copy-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ccc;
+}
+
+[data-theme="dark"] .isbn-copy-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
 }
 
 .library-navigation {
