@@ -1,7 +1,184 @@
 {{ define "main" }}
-  <h1>{{ .Title }}</h1>
-  {{ .Content }}
-  {{ range .Pages }}
-    <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
-  {{ end }}
-{{ end }}
+<h1>{{ .Title }}</h1>
+{{ .Content }} {{ if eq .Data.Singular "tag" }}
+<div class="tags-controls">
+    <div class="tags-view">
+        <span class="control-label">View:</span>
+        <div class="button-group" data-control="view">
+            <button class="toggle-btn active" data-value="cloud">
+                Tag Cloud
+            </button>
+            <button class="toggle-btn" data-value="alphabetical">A-Z</button>
+        </div>
+    </div>
+</div>
+
+<div class="tags-content">
+    <div class="tags-cloud-view">
+        {{ range .Data.Terms.ByCount }}
+        <a
+            href="{{ .Page.RelPermalink }}"
+            class="tag-cloud-item"
+            data-count="{{ .Count }}"
+            data-title="{{ .Page.LinkTitle }}"
+            data-first-letter="{{ substr .Page.LinkTitle 0 1 | upper }}"
+            title="{{ .Page.LinkTitle }} ({{ .Count }} {{ if eq .Count 1 }}post{{ else }}posts{{ end }})"
+        >
+            {{ .Page.LinkTitle }}
+        </a>
+        {{ end }}
+    </div>
+
+    <div class="tags-alphabetical-view" style="display: none">
+        {{ range .Data.Terms.Alphabetical }}
+        <div
+            class="tag-alphabetical-item"
+            data-title="{{ .Page.LinkTitle }}"
+            data-count="{{ .Count }}"
+            data-first-letter="{{ substr .Page.LinkTitle 0 1 | upper }}"
+        >
+            <a href="{{ .Page.RelPermalink }}" class="tag-link">
+                {{ .Page.LinkTitle }}
+            </a>
+            <span class="tag-count">({{ .Count }})</span>
+        </div>
+        {{ end }}
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const cloudView = document.querySelector(".tags-cloud-view");
+        const alphabeticalView = document.querySelector(
+            ".tags-alphabetical-view",
+        );
+        const tagCloudItems = Array.from(
+            document.querySelectorAll(".tag-cloud-item"),
+        );
+        const tagAlphabeticalItems = Array.from(
+            document.querySelectorAll(".tag-alphabetical-item"),
+        );
+
+        let currentView = "cloud";
+
+        function calculateTagCloudSizes() {
+            if (tagCloudItems.length === 0) return;
+
+            const counts = tagCloudItems.map((item) =>
+                parseInt(item.getAttribute("data-count")),
+            );
+            const maxCount = Math.max(...counts);
+            const minCount = Math.min(...counts);
+
+            tagCloudItems.forEach((item) => {
+                const count = parseInt(item.getAttribute("data-count"));
+                const ratio =
+                    maxCount > minCount
+                        ? (count - minCount) / (maxCount - minCount)
+                        : 0.5;
+                const fontSize = 0.9 + ratio * 1.1; // Range from 0.9rem to 2rem
+                item.style.fontSize = fontSize + "rem";
+            });
+        }
+
+        function createSectionHeader(text, id) {
+            const header = document.createElement("h2");
+            header.textContent = text;
+            header.className = "tags-section-header";
+            header.id = id;
+            return header;
+        }
+
+        function createSectionSeparator() {
+            const hr = document.createElement("hr");
+            hr.className = "tags-section-separator";
+            return hr;
+        }
+
+        function createTagsWrapper() {
+            const wrapper = document.createElement("div");
+            wrapper.className = "tags-section";
+            return wrapper;
+        }
+
+        function displayAlphabeticalView() {
+            alphabeticalView.innerHTML = "";
+
+            if (tagAlphabeticalItems.length === 0) {
+                const noTags = document.createElement("p");
+                noTags.textContent = "No tags available.";
+                alphabeticalView.appendChild(noTags);
+                return;
+            }
+
+            const sortedItems = tagAlphabeticalItems.sort((a, b) =>
+                a
+                    .getAttribute("data-title")
+                    .localeCompare(b.getAttribute("data-title")),
+            );
+
+            const groupedByLetter = {};
+            sortedItems.forEach((item) => {
+                const firstLetter = item.getAttribute("data-first-letter");
+                if (!groupedByLetter[firstLetter]) {
+                    groupedByLetter[firstLetter] = [];
+                }
+                groupedByLetter[firstLetter].push(item);
+            });
+
+            const letters = Object.keys(groupedByLetter).sort();
+            letters.forEach((letter, index) => {
+                if (index > 0) {
+                    alphabeticalView.appendChild(createSectionSeparator());
+                }
+
+                alphabeticalView.appendChild(
+                    createSectionHeader(letter, `letter-${letter}`),
+                );
+                alphabeticalView.appendChild(createSectionSeparator());
+
+                const tagsWrapper = createTagsWrapper();
+                groupedByLetter[letter].forEach((item) => {
+                    tagsWrapper.appendChild(item.cloneNode(true));
+                });
+                alphabeticalView.appendChild(tagsWrapper);
+            });
+        }
+
+        function switchView(view) {
+            currentView = view;
+
+            if (view === "cloud") {
+                cloudView.style.display = "block";
+                alphabeticalView.style.display = "none";
+                calculateTagCloudSizes();
+            } else {
+                cloudView.style.display = "none";
+                alphabeticalView.style.display = "block";
+                displayAlphabeticalView();
+            }
+        }
+
+        function handleButtonClick(e) {
+            if (!e.target.classList.contains("toggle-btn")) return;
+
+            const buttonGroup = e.target.parentElement;
+            const value = e.target.getAttribute("data-value");
+
+            buttonGroup.querySelectorAll(".toggle-btn").forEach((btn) => {
+                btn.classList.remove("active");
+            });
+
+            e.target.classList.add("active");
+            switchView(value);
+        }
+
+        document.addEventListener("click", handleButtonClick);
+
+        calculateTagCloudSizes();
+    });
+</script>
+
+{{ else }} {{ range .Pages }}
+<h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+{{ end }} {{ end }} {{ end }}
