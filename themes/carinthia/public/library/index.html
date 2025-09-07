@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width" />
 <title>
-    Library | Carinthia Theme Test
+    Libraries | Carinthia Theme Test
 </title>
 <script>
     (function () {
@@ -162,124 +162,249 @@
   </header>
   <main>
     
-<h1>Library</h1>
-<p>Welcome to my personal library. Here you&rsquo;ll find books I&rsquo;ve read, along with my thoughts and ratings.</p>
+<h1>Libraries</h1>
 
 
 
-<div class="library-filter">
-    <label for="category-filter">Filter by category:</label>
-    <select id="category-filter">
-        <option value="all">All Books</option>
-        <option value="fiction">Fiction</option>
-        <option value="non-fiction">Non-Fiction</option>
-    </select>
+<div class="library-controls">
+    <div class="library-filter">
+        <label for="category-filter">Filter by category:</label>
+        <select id="category-filter">
+            <option value="all">All Books</option>
+            <option value="fiction">Fiction</option>
+            <option value="non-fiction">Non-Fiction</option>
+        </select>
+    </div>
+
+    <div class="library-sort">
+        <label for="sort-method">Sort by:</label>
+        <select id="sort-method">
+            <option value="read-date">Read Date</option>
+            <option value="alphabetical">Alphabetical</option>
+        </select>
+    </div>
 </div>
 
-<div class="library-cards">
+<div class="library-content">
     
-    <article class="library-card" data-category="non-fiction">
-        
-        <div class="card-image card-image-placeholder">
-            <div class="placeholder-content">
-                <span>Sapiens: A Brief History of Humankind</span>
-            </div>
-        </div>
-        
-
-        <div class="card-content">
-            <h3 class="card-title">
-                <a href="/library/sapiens/">Sapiens: A Brief History of Humankind</a>
-            </h3>
-
-            <div class="card-meta">
-                
-                
-                <div class="meta-item">
-                    <strong>Finished:</strong> February 10, 2024
-                </div>
-                
-
-                
-                <div class="meta-item">
-                    <span class="category-badge category-non-fiction">Non-Fiction</span>
-                </div>
-                
-
-                
-                <div class="meta-item">
-                    443 pages
-                </div>
-                
-            </div>
-
+    <article class="library-card"
+             data-category="non-fiction"
+             data-title="Atomic Habits"
+             data-finished-date="2023-12-05"
+             data-finished-year="2023"
+             data-first-letter="A">
+        <a href="/library/atomic-habits/" class="card-link">
             
-            <p class="card-summary">Harari explores how Homo sapiens came to dominate the world through three major revolutions.</p>
+            <div class="card-image card-image-placeholder">
+                <div class="placeholder-content">
+                    <span>Atomic Habits</span>
+                </div>
+            </div>
             
-        </div>
+
+            <div class="card-content">
+                <h3 class="card-title">Atomic Habits</h3>
+
+                <div class="card-meta">
+                    
+                    
+                    <div class="meta-item">
+                        <strong>Finished:</strong> December 5, 2023
+                    </div>
+                    
+
+                    
+                    <div class="meta-item">
+                        <span class="category-badge category-non-fiction">Non-Fiction</span>
+                    </div>
+                    
+
+                    
+                    <div class="meta-item">
+                        320 pages
+                    </div>
+                    
+                </div>
+
+                
+                <p class="card-summary">A comprehensive guide to building good habits and breaking bad ones through small, incremental changes.</p>
+                
+            </div>
+        </a>
     </article>
     
-    <article class="library-card" data-category="fiction">
-        
-        <div class="card-image card-image-placeholder">
-            <div class="placeholder-content">
-                <span>Dune</span>
-            </div>
-        </div>
-        
-
-        <div class="card-content">
-            <h3 class="card-title">
-                <a href="/library/dune/">Dune</a>
-            </h3>
-
-            <div class="card-meta">
-                
-                
-                <div class="meta-item">
-                    <strong>Finished:</strong> January 15, 2024
-                </div>
-                
-
-                
-                <div class="meta-item">
-                    <span class="category-badge category-fiction">Fiction</span>
-                </div>
-                
-
-                
-                <div class="meta-item">
-                    688 pages
-                </div>
-                
-            </div>
-
+    <article class="library-card"
+             data-category="fiction"
+             data-title="Foundation"
+             data-finished-date="2023-11-20"
+             data-finished-year="2023"
+             data-first-letter="F">
+        <a href="/library/foundation/" class="card-link">
             
-            <p class="card-summary">Epic science fiction novel about politics, religion, and ecology on the desert planet Arrakis.</p>
+            <div class="card-image card-image-placeholder">
+                <div class="placeholder-content">
+                    <span>Foundation</span>
+                </div>
+            </div>
             
-        </div>
+
+            <div class="card-content">
+                <h3 class="card-title">Foundation</h3>
+
+                <div class="card-meta">
+                    
+                    
+                    <div class="meta-item">
+                        <strong>Finished:</strong> November 20, 2023
+                    </div>
+                    
+
+                    
+                    <div class="meta-item">
+                        <span class="category-badge category-fiction">Fiction</span>
+                    </div>
+                    
+
+                    
+                    <div class="meta-item">
+                        244 pages
+                    </div>
+                    
+                </div>
+
+                
+                <p class="card-summary">The first book in Asimovs epic Foundation series about psychohistory and the fall of a galactic empire.</p>
+                
+            </div>
+        </a>
     </article>
     
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const filter = document.getElementById('category-filter');
-    const cards = document.querySelectorAll('.library-card');
+    const categoryFilter = document.getElementById('category-filter');
+    const sortMethod = document.getElementById('sort-method');
+    const libraryContent = document.querySelector('.library-content');
+    const cards = Array.from(document.querySelectorAll('.library-card'));
 
-    filter.addEventListener('change', function() {
-        const selectedCategory = this.value;
+    function createSectionHeader(text, id) {
+        const header = document.createElement('h2');
+        header.textContent = text;
+        header.className = 'library-section-header';
+        header.id = id;
+        return header;
+    }
 
-        cards.forEach(card => {
+    function createSectionSeparator() {
+        const hr = document.createElement('hr');
+        hr.className = 'library-section-separator';
+        return hr;
+    }
+
+    function createCardsWrapper() {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'library-cards-section';
+        return wrapper;
+    }
+
+    function clearLibrary() {
+        libraryContent.innerHTML = '';
+    }
+
+    function getFilteredCards() {
+        const selectedCategory = categoryFilter.value;
+        return cards.filter(card => {
             const cardCategory = card.getAttribute('data-category');
-
-            if (selectedCategory === 'all' || selectedCategory === cardCategory) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
+            return selectedCategory === 'all' || selectedCategory === cardCategory;
         });
-    });
+    }
+
+    function sortAndDisplayCards() {
+        const filteredCards = getFilteredCards();
+        const sortValue = sortMethod.value;
+
+        clearLibrary();
+
+        if (filteredCards.length === 0) {
+            const noBooks = document.createElement('p');
+            noBooks.textContent = 'No books match the current filter.';
+            libraryContent.appendChild(noBooks);
+            return;
+        }
+
+        if (sortValue === 'alphabetical') {
+            
+            const sortedCards = filteredCards.sort((a, b) =>
+                a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'))
+            );
+
+            const groupedByLetter = {};
+            sortedCards.forEach(card => {
+                const firstLetter = card.getAttribute('data-first-letter');
+                if (!groupedByLetter[firstLetter]) {
+                    groupedByLetter[firstLetter] = [];
+                }
+                groupedByLetter[firstLetter].push(card);
+            });
+
+            const letters = Object.keys(groupedByLetter).sort();
+            letters.forEach((letter, index) => {
+                if (index > 0) {
+                    libraryContent.appendChild(createSectionSeparator());
+                }
+
+                libraryContent.appendChild(createSectionHeader(letter, `letter-${letter}`));
+                libraryContent.appendChild(createSectionSeparator());
+
+                const cardsWrapper = createCardsWrapper();
+                groupedByLetter[letter].forEach(card => {
+                    cardsWrapper.appendChild(card);
+                });
+                libraryContent.appendChild(cardsWrapper);
+            });
+
+        } else {
+            
+            const sortedCards = filteredCards.sort((a, b) => {
+                const dateA = new Date(a.getAttribute('data-finished-date'));
+                const dateB = new Date(b.getAttribute('data-finished-date'));
+                return dateB - dateA; 
+            });
+
+            const groupedByYear = {};
+            sortedCards.forEach(card => {
+                const year = card.getAttribute('data-finished-year');
+                if (!groupedByYear[year]) {
+                    groupedByYear[year] = [];
+                }
+                groupedByYear[year].push(card);
+            });
+
+            const years = Object.keys(groupedByYear).sort((a, b) => b - a); 
+            years.forEach((year, index) => {
+                if (index > 0) {
+                    libraryContent.appendChild(createSectionSeparator());
+                }
+
+                libraryContent.appendChild(createSectionHeader(year, `year-${year}`));
+                libraryContent.appendChild(createSectionSeparator());
+
+                const cardsWrapper = createCardsWrapper();
+                groupedByYear[year].forEach(card => {
+                    cardsWrapper.appendChild(card);
+                });
+                libraryContent.appendChild(cardsWrapper);
+            });
+        }
+    }
+
+    
+    sortAndDisplayCards();
+
+    
+    categoryFilter.addEventListener('change', sortAndDisplayCards);
+    sortMethod.addEventListener('change', sortAndDisplayCards);
 });
 </script>
 

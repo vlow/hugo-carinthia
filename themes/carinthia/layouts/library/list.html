@@ -3,18 +3,33 @@
 {{ .Content }}
 
 {{ if .Pages }}
-<div class="library-filter">
-    <label for="category-filter">Filter by category:</label>
-    <select id="category-filter">
-        <option value="all">All Books</option>
-        <option value="fiction">Fiction</option>
-        <option value="non-fiction">Non-Fiction</option>
-    </select>
+<div class="library-controls">
+    <div class="library-filter">
+        <label for="category-filter">Filter by category:</label>
+        <select id="category-filter">
+            <option value="all">All Books</option>
+            <option value="fiction">Fiction</option>
+            <option value="non-fiction">Non-Fiction</option>
+        </select>
+    </div>
+
+    <div class="library-sort">
+        <label for="sort-method">Sort by:</label>
+        <select id="sort-method">
+            <option value="read-date">Read Date</option>
+            <option value="alphabetical">Alphabetical</option>
+        </select>
+    </div>
 </div>
 
-<div class="library-cards">
+<div class="library-content">
     {{ range .Pages.ByDate.Reverse }}
-    <article class="library-card" data-category="{{ .Params.category | default "uncategorized" }}">
+    <article class="library-card"
+             data-category="{{ .Params.category | default "uncategorized" }}"
+             data-title="{{ .Title }}"
+             data-finished-date="{{ .Params.finished_date | time.Format "2006-01-02" }}"
+             data-finished-year="{{ .Params.finished_date | time.Format "2006" }}"
+             data-first-letter="{{ substr .Title 0 1 | upper }}">
         <a href="{{ .RelPermalink }}" class="card-link">
             {{ if .Params.cover_image }}
             <div class="card-image">
@@ -63,22 +78,128 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const filter = document.getElementById('category-filter');
-    const cards = document.querySelectorAll('.library-card');
+    const categoryFilter = document.getElementById('category-filter');
+    const sortMethod = document.getElementById('sort-method');
+    const libraryContent = document.querySelector('.library-content');
+    const cards = Array.from(document.querySelectorAll('.library-card'));
 
-    filter.addEventListener('change', function() {
-        const selectedCategory = this.value;
+    function createSectionHeader(text, id) {
+        const header = document.createElement('h2');
+        header.textContent = text;
+        header.className = 'library-section-header';
+        header.id = id;
+        return header;
+    }
 
-        cards.forEach(card => {
+    function createSectionSeparator() {
+        const hr = document.createElement('hr');
+        hr.className = 'library-section-separator';
+        return hr;
+    }
+
+    function createCardsWrapper() {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'library-cards-section';
+        return wrapper;
+    }
+
+    function clearLibrary() {
+        libraryContent.innerHTML = '';
+    }
+
+    function getFilteredCards() {
+        const selectedCategory = categoryFilter.value;
+        return cards.filter(card => {
             const cardCategory = card.getAttribute('data-category');
-
-            if (selectedCategory === 'all' || selectedCategory === cardCategory) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
+            return selectedCategory === 'all' || selectedCategory === cardCategory;
         });
-    });
+    }
+
+    function sortAndDisplayCards() {
+        const filteredCards = getFilteredCards();
+        const sortValue = sortMethod.value;
+
+        clearLibrary();
+
+        if (filteredCards.length === 0) {
+            const noBooks = document.createElement('p');
+            noBooks.textContent = 'No books match the current filter.';
+            libraryContent.appendChild(noBooks);
+            return;
+        }
+
+        if (sortValue === 'alphabetical') {
+            // Sort alphabetically and group by first letter
+            const sortedCards = filteredCards.sort((a, b) =>
+                a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'))
+            );
+
+            const groupedByLetter = {};
+            sortedCards.forEach(card => {
+                const firstLetter = card.getAttribute('data-first-letter');
+                if (!groupedByLetter[firstLetter]) {
+                    groupedByLetter[firstLetter] = [];
+                }
+                groupedByLetter[firstLetter].push(card);
+            });
+
+            const letters = Object.keys(groupedByLetter).sort();
+            letters.forEach((letter, index) => {
+                if (index > 0) {
+                    libraryContent.appendChild(createSectionSeparator());
+                }
+
+                libraryContent.appendChild(createSectionHeader(letter, `letter-${letter}`));
+                libraryContent.appendChild(createSectionSeparator());
+
+                const cardsWrapper = createCardsWrapper();
+                groupedByLetter[letter].forEach(card => {
+                    cardsWrapper.appendChild(card);
+                });
+                libraryContent.appendChild(cardsWrapper);
+            });
+
+        } else {
+            // Sort by read date and group by year
+            const sortedCards = filteredCards.sort((a, b) => {
+                const dateA = new Date(a.getAttribute('data-finished-date'));
+                const dateB = new Date(b.getAttribute('data-finished-date'));
+                return dateB - dateA; // Most recent first
+            });
+
+            const groupedByYear = {};
+            sortedCards.forEach(card => {
+                const year = card.getAttribute('data-finished-year');
+                if (!groupedByYear[year]) {
+                    groupedByYear[year] = [];
+                }
+                groupedByYear[year].push(card);
+            });
+
+            const years = Object.keys(groupedByYear).sort((a, b) => b - a); // Most recent year first
+            years.forEach((year, index) => {
+                if (index > 0) {
+                    libraryContent.appendChild(createSectionSeparator());
+                }
+
+                libraryContent.appendChild(createSectionHeader(year, `year-${year}`));
+                libraryContent.appendChild(createSectionSeparator());
+
+                const cardsWrapper = createCardsWrapper();
+                groupedByYear[year].forEach(card => {
+                    cardsWrapper.appendChild(card);
+                });
+                libraryContent.appendChild(cardsWrapper);
+            });
+        }
+    }
+
+    // Initial display
+    sortAndDisplayCards();
+
+    // Event listeners
+    categoryFilter.addEventListener('change', sortAndDisplayCards);
+    sortMethod.addEventListener('change', sortAndDisplayCards);
 });
 </script>
 

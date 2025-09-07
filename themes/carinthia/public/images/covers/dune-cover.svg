@@ -1,0 +1,27 @@
+<svg width="300" height="450" viewBox="0 0 300 450" xmlns="http://www.w3.org/2000/svg">
+  <!-- Desert background -->
+  <defs>
+    <linearGradient id="desert" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#CD853F;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DEB887;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="300" height="450" fill="url(#desert)"/>
+
+  <!-- Desert dunes -->
+  <path d="M0 300 Q75 250 150 300 T300 300 L300 450 L0 450 Z" fill="#F4A460" opacity="0.7"/>
+  <path d="M0 350 Q100 320 200 350 T300 350 L300 450 L0 450 Z" fill="#DEB887" opacity="0.5"/>
+
+  <!-- Title -->
+  <text x="150" y="80" font-family="serif" font-size="48" font-weight="bold" text-anchor="middle" fill="#2F4F4F">DUNE</text>
+
+  <!-- Author -->
+  <text x="150" y="120" font-family="serif" font-size="18" text-anchor="middle" fill="#2F4F4F">FRANK HERBERT</text>
+
+  <!-- Decorative elements -->
+  <circle cx="150" cy="200" r="30" fill="#DAA520" opacity="0.8"/>
+  <circle cx="150" cy="200" r="25" fill="none" stroke="#2F4F4F" stroke-width="2"/>
+</svg>

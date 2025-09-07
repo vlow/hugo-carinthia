@@ -6,47 +6,54 @@
     <description>Recent content in Tags on Carinthia Theme Test</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 10 Feb 2024 14:20:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 05 Dec 2023 09:15:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1314/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Anthropology</title>
-      <link>http://localhost:1314/tags/anthropology/</link>
-      <pubDate>Sat, 10 Feb 2024 14:20:00 +0000</pubDate>
-      <guid>http://localhost:1314/tags/anthropology/</guid>
+      <title>Productivity</title>
+      <link>http://localhost:1314/tags/productivity/</link>
+      <pubDate>Tue, 05 Dec 2023 09:15:00 +0000</pubDate>
+      <guid>http://localhost:1314/tags/productivity/</guid>
       <description></description>
     </item>
     <item>
-      <title>Evolution</title>
-      <link>http://localhost:1314/tags/evolution/</link>
-      <pubDate>Sat, 10 Feb 2024 14:20:00 +0000</pubDate>
-      <guid>http://localhost:1314/tags/evolution/</guid>
+      <title>Psychology</title>
+      <link>http://localhost:1314/tags/psychology/</link>
+      <pubDate>Tue, 05 Dec 2023 09:15:00 +0000</pubDate>
+      <guid>http://localhost:1314/tags/psychology/</guid>
       <description></description>
     </item>
     <item>
-      <title>History</title>
-      <link>http://localhost:1314/tags/history/</link>
-      <pubDate>Sat, 10 Feb 2024 14:20:00 +0000</pubDate>
-      <guid>http://localhost:1314/tags/history/</guid>
+      <title>Self-Help</title>
+      <link>http://localhost:1314/tags/self-help/</link>
+      <pubDate>Tue, 05 Dec 2023 09:15:00 +0000</pubDate>
+      <guid>http://localhost:1314/tags/self-help/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Asimov</title>
+      <link>http://localhost:1314/tags/asimov/</link>
+      <pubDate>Mon, 20 Nov 2023 16:30:00 +0000</pubDate>
+      <guid>http://localhost:1314/tags/asimov/</guid>
       <description></description>
     </item>
     <item>
       <title>Classic</title>
       <link>http://localhost:1314/tags/classic/</link>
-      <pubDate>Mon, 15 Jan 2024 10:30:00 +0000</pubDate>
+      <pubDate>Mon, 20 Nov 2023 16:30:00 +0000</pubDate>
       <guid>http://localhost:1314/tags/classic/</guid>
       <description></description>
     </item>
     <item>
       <title>Science-Fiction</title>
       <link>http://localhost:1314/tags/science-fiction/</link>
-      <pubDate>Mon, 15 Jan 2024 10:30:00 +0000</pubDate>
+      <pubDate>Mon, 20 Nov 2023 16:30:00 +0000</pubDate>
       <guid>http://localhost:1314/tags/science-fiction/</guid>
       <description></description>
     </item>
     <item>
       <title>Space-Opera</title>
       <link>http://localhost:1314/tags/space-opera/</link>
-      <pubDate>Mon, 15 Jan 2024 10:30:00 +0000</pubDate>
+      <pubDate>Mon, 20 Nov 2023 16:30:00 +0000</pubDate>
       <guid>http://localhost:1314/tags/space-opera/</guid>
       <description></description>
     </item>

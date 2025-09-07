@@ -180,6 +180,8 @@
       );
       contentImages.forEach(function(img) {
         if (img.closest(".image-container")) return;
+        if (img.closest(".library-card")) return;
+        if (img.closest(".library-banner")) return;
         if (img.classList.contains("no-enhance") || img.classList.contains("inline-image"))
           return;
         enhanceImage(img);
@@ -301,5 +303,50 @@
       initializeImages();
     }
     window.enhanceImages = reinitializeImages;
+  })();
+  (function() {
+    function initializeISBNCopy() {
+      const isbnCopyButtons = document.querySelectorAll(".isbn-copy-btn");
+      isbnCopyButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+          const isbn = this.getAttribute("data-isbn");
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(isbn).then(() => {
+              showCopySuccess(this);
+            }).catch(() => {
+              fallbackCopy(isbn, this);
+            });
+          } else {
+            fallbackCopy(isbn, this);
+          }
+        });
+      });
+    }
+    function fallbackCopy(text, button) {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand("copy");
+        showCopySuccess(button);
+      } catch (err) {
+        console.error("Failed to copy ISBN:", err);
+      } finally {
+        document.body.removeChild(textarea);
+      }
+    }
+    function showCopySuccess(button) {
+      button.classList.add("copied");
+      setTimeout(() => {
+        button.classList.remove("copied");
+      }, 2e3);
+    }
+    document.addEventListener("DOMContentLoaded", initializeISBNCopy);
+    if (document.readyState !== "loading") {
+      initializeISBNCopy();
+    }
   })();
 })();
