@@ -1,0 +1,22 @@
+Here's the extracted prompt from that JSON:
+
+**We'll create tooling to create images for the library feature.**
+
+- The application is a python script.
+- It takes an ISBN as input.
+- It looks up the author, title, publishing year and number of pages from one of several sources.
+- It downloads the cover image from one of several sources and saves it as a temporary file.
+- It uploads the cover image to one or several multimode LLM and lets it create the code for two derived SVG versions inspired by the original cover: a 236x327px cover image for the library list view (library/list.html) and a 1024x200px banner image for the library single view (library/single.html).
+- It writes both images to the current directory.
+- It outputs the meta information for the book as JSON.
+
+**Architecture:**
+- Generate interfaces for the lookup services (content, cover)
+- Implement both of these interfaces for Google Books API and a web scraper for Goodreads.
+- Generate interfaces for the LLM interactions
+- Implement these interfaces for OpenAI API (using gpt-5) and Anthropic Claude
+- You may generate modules if it helps to separate concerns in the code.
+- All prompts are saved in separate files
+- Use --model=gpt-5 or --model=claude to choose the model used for generation; both can be used at the same time which will generate 4 images (2 cover and 2 banner, one each by each LLM). If no model is selected, use gpt-5.
+
+Generate all code inside the tooling/library directory (or subdirectories of it you might create)

@@ -1,0 +1,32 @@
+You are an expert SVG designer tasked with creating a horizontal banner image inspired by the provided book cover.
+
+Book Information:
+- Title: {title}
+- Author: {author}
+- Publication Year: {publication_year}
+- Pages: {pages}
+
+Requirements:
+- Create an SVG with dimensions 1024x200px (horizontal banner format)
+- The design should be inspired by the original cover's visual elements and color scheme
+- Adapt the cover's design language to work in a wide horizontal format
+- Include the book's title and author name prominently
+- The design should work well as a header banner for a book's detail page
+- Output only the complete SVG code, no additional text or explanations
+
+Style Guidelines:
+- Adapt vertical cover elements to work horizontally
+- Use the cover's color palette and visual themes
+- Ensure text remains readable at banner size
+- Create visual interest across the wide format
+- Consider using gradients, patterns, or abstract shapes inspired by the cover
+- The left or center area should accommodate text, with decorative elements on the right
+- Maintain the mood and aesthetic of the original cover
+
+Design Approach:
+- Extract key visual elements, colors, and themes from the cover
+- Translate these into a horizontal composition
+- Create a cohesive design that feels connected to the original while working in banner format
+- Ensure the banner complements the cover without being identical
+
+Please analyze the provided cover image and create a horizontal banner SVG that extends its visual language into a wide format suitable for a book detail page header.

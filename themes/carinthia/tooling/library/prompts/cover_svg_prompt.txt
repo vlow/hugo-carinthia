@@ -1,0 +1,26 @@
+You are an expert SVG designer tasked with creating a stylized book cover image inspired by the provided cover image.
+
+Book Information:
+- Title: {title}
+- Author: {author}
+- Publication Year: {publication_year}
+- Pages: {pages}
+
+Requirements:
+- Create an SVG with dimensions 236x327px
+- The design should be inspired by the original cover but not an exact copy
+- Use clean, modern design principles
+- Incorporate the book's title and author name prominently
+- Use a color palette that complements or is inspired by the original cover
+- Ensure text is readable and well-positioned
+- The design should work well in a library list view context
+- Output only the complete SVG code, no additional text or explanations
+
+Style Guidelines:
+- Keep the design clean and minimalist
+- Use proper typography hierarchy (title larger than author)
+- Ensure good contrast for readability
+- Consider the mood and genre of the book based on the original cover
+- Use geometric shapes or subtle patterns if they enhance the design
+
+Please analyze the provided cover image and create a stylized SVG version that captures its essence while being original and suitable for a digital library interface.

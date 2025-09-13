@@ -1,0 +1,16 @@
+Create a book cover image for the following book:
+
+Title: {title}
+Author: {author}
+Publication Year: {publication_year}
+Description: {description}
+
+Create a visually appealing book cover that:
+- Reflects the book's genre, mood, and themes based on the title and description
+- Uses appropriate typography for the title and author name
+- Employs a color scheme and visual style that matches the book's content
+- Follows modern book cover design principles
+- Is suitable for both print and digital formats
+- Creates visual interest without being overly cluttered
+
+Style should be professional and marketable, similar to contemporary book covers in the relevant genre. The cover should immediately convey what type of book this is and appeal to the target audience.
