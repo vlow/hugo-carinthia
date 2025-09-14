@@ -54,6 +54,23 @@ class ClaudeService(LLMInterface):
 
         return template.format(**format_dict)
 
+    def _clean_svg_output(self, response: str) -> str:
+        """Clean SVG output by removing markdown code markers and extra whitespace."""
+        # Remove markdown code block markers
+        response = response.strip()
+
+        # Remove ```svg at the beginning
+        if response.startswith('```svg'):
+            response = response[6:].strip()
+        elif response.startswith('```'):
+            response = response[3:].strip()
+
+        # Remove ``` at the end
+        if response.endswith('```'):
+            response = response[:-3].strip()
+
+        return response
+
     async def generate_cover_svg(self, cover_image_path: str, book: Book) -> str:
         """Generate a 236x327px cover SVG based on the original cover."""
         template = self._load_prompt_template("cover_svg_prompt.txt")
@@ -63,8 +80,8 @@ class ClaudeService(LLMInterface):
         base64_image, media_type = self._encode_image(cover_image_path)
 
         message = await self.client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=4000,
+            model="claude-sonnet-4-0",
+            max_tokens=16000,
             temperature=0.7,
             messages=[
                 {
@@ -87,7 +104,7 @@ class ClaudeService(LLMInterface):
             ]
         )
 
-        return message.content[0].text.strip()
+        return self._clean_svg_output(message.content[0].text)
 
     async def generate_banner_svg(self, cover_image_path: str, book: Book, cover_svg: str) -> str:
         """Generate a 1024x200px banner SVG based on the original cover and stylized SVG cover."""
@@ -98,8 +115,8 @@ class ClaudeService(LLMInterface):
         base64_image, media_type = self._encode_image(cover_image_path)
 
         message = await self.client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=4000,
+            model="claude-sonnet-4-0",
+            max_tokens=16000,
             temperature=0.7,
             messages=[
                 {
@@ -122,7 +139,7 @@ class ClaudeService(LLMInterface):
             ]
         )
 
-        return message.content[0].text.strip()
+        return self._clean_svg_output(message.content[0].text)
 
     async def generate_cover_svg_direct(self, book: Book) -> str:
         """Generate a 236x327px cover SVG based solely on book text information."""
@@ -141,7 +158,7 @@ class ClaudeService(LLMInterface):
             ]
         )
 
-        return message.content[0].text.strip()
+        return self._clean_svg_output(message.content[0].text)
 
     async def generate_banner_svg_direct(self, book: Book, cover_svg: str) -> str:
         """Generate a 1024x200px banner SVG based solely on the stylized SVG cover."""
@@ -160,7 +177,7 @@ class ClaudeService(LLMInterface):
             ]
         )
 
-        return message.content[0].text.strip()
+        return self._clean_svg_output(message.content[0].text)
 
     async def generate_cover_image(self, book: Book) -> Optional[str]:
         """Claude cannot generate images, so this returns None."""
