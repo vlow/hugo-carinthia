@@ -66,7 +66,7 @@ class OpenAIService(LLMInterface):
                     ]
                 }
             ],
-            max_completion_tokens=4000,
+            max_completion_tokens=16000,
             temperature=1,
             reasoning_effort="high"  # Use high reasoning effort for complex SVG generation
         )
@@ -97,7 +97,7 @@ class OpenAIService(LLMInterface):
                     ]
                 }
             ],
-            max_completion_tokens=4000,
+            max_completion_tokens=16000,
             temperature=1,
             reasoning_effort="high"  # Use high reasoning effort for complex SVG generation
         )
