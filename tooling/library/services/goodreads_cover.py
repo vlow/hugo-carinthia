@@ -31,8 +31,8 @@ class GoodreadsCoverService(CoverLookupInterface):
                     html = await response.text()
                     soup = BeautifulSoup(html, 'html.parser')
 
-                    # Find the first book result and its cover
-                    book_cover = soup.select_one('img.bookCover')
+                    # Find the book cover using the specific CSS path from BookPage__leftColumn
+                    book_cover = soup.select_one('.BookPage__leftColumn img')
                     if book_cover:
                         cover_url = book_cover.get('src')
                         if cover_url and not cover_url.startswith('data:'):
