@@ -1,7 +1,8 @@
 {{ define "main" }}
-{{ if .Params.banner }}
+{{ $bannerResource := .Resources.Get "banner.svg" }}
+{{ if $bannerResource }}
 <div class="library-banner">
-    <img src="{{ .Params.banner | relURL }}" alt="Banner for {{ .Title }}" />
+    <img src="{{ $bannerResource.RelPermalink }}" alt="Banner for {{ .Title }}" />
 </div>
 {{ end }}
 

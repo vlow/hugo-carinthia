@@ -95,19 +95,29 @@ class GoodreadsScraperService(ContentLookupInterface):
                 if pub_year:
                     break
 
-            # Extract page count - try multiple approaches
+            # Extract page count - use the specific data-testid first, then fallbacks
             pages = None
-            page_selectors = ['p[data-testid="pagesFormat"]', '.FeaturedDetails', '.BookPageMetadataSection__details']
-            for selector in page_selectors:
-                page_info = soup.select(selector)
-                for info in page_info:
-                    text = info.get_text()
-                    pages_match = re.search(r'(\d+)\s+pages', text)
-                    if pages_match:
-                        pages = int(pages_match.group(1))
+            # Try the specific pagesFormat element first
+            pages_element = soup.select_one('p[data-testid="pagesFormat"]')
+            if pages_element:
+                text = pages_element.get_text()
+                pages_match = re.search(r'(\d+)\s+pages', text)
+                if pages_match:
+                    pages = int(pages_match.group(1))
+
+            # Fallback to other selectors if not found
+            if not pages:
+                page_selectors = ['.FeaturedDetails', '.BookPageMetadataSection__details']
+                for selector in page_selectors:
+                    page_info = soup.select(selector)
+                    for info in page_info:
+                        text = info.get_text()
+                        pages_match = re.search(r'(\d+)\s+pages', text)
+                        if pages_match:
+                            pages = int(pages_match.group(1))
+                            break
+                    if pages:
                         break
-                if pages:
-                    break
 
             # Extract description - try multiple selectors
             description = ''

@@ -31,9 +31,10 @@
              data-finished-year="{{ .Params.finished_date | time.Format "2006" }}"
              data-first-letter="{{ substr .Title 0 1 | upper }}">
         <a href="{{ .RelPermalink }}" class="card-link">
-            {{ if .Params.cover_image }}
+            {{ $coverResource := .Resources.Get "cover.svg" }}
+            {{ if $coverResource }}
             <div class="card-image">
-                <img src="{{ .Params.cover_image | relURL }}" alt="Cover of {{ .Title }}" loading="lazy">
+                <img src="{{ $coverResource.RelPermalink }}" alt="Cover of {{ .Title }}" loading="lazy">
             </div>
             {{ else }}
             <div class="card-image card-image-placeholder">

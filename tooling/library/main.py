@@ -52,9 +52,8 @@ def group_files_by_pairs(generated_files: List[str]) -> Dict:
                     'banner': None
                 }
 
-            # Get full absolute path
-            full_path = os.path.abspath(filename)
-            pairs[hash_prefix][file_type] = full_path
+            # Store just the filename - files are in output_dir
+            pairs[hash_prefix][file_type] = filename
 
     # Convert to list and filter out incomplete pairs
     paired_files = []
@@ -198,6 +197,110 @@ async def generate_svg_pair_direct(book: Book, models: List[str],
     return generated_files
 
 
+async def create_hugo_post(book: Book, post_dir: str) -> None:
+    """Create a Hugo library post with prefilled frontmatter."""
+    from datetime import datetime
+    import slugify
+
+    # Use index.md for page bundle (leaf bundle)
+    post_filename = "index.md"
+    post_path = os.path.join(post_dir, post_filename)
+
+    # Generate current timestamp
+    current_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # Determine category based on book metadata
+    category = 'fiction'  # Default, could be enhanced with genre detection
+
+    # Create frontmatter (no image paths needed - templates will find cover.svg and banner.svg automatically)
+    frontmatter = f"""+++
+title = '{book.title}'
+date = {current_time}
+draft = true
+category = '{category}'
+finished_date = {current_time}
+pages = {book.pages or 0}
+average_reading_time = '{int((book.pages or 0) / 35) if book.pages else 0}'
+isbn = '{book.isbn}'
+summary = ''
+tags = []
++++
+
+## About {book.title}
+
+{book.description or "No description available."}
+
+## My Thoughts
+
+(Add your thoughts and review here)
+"""
+
+    # Write the post file
+    with open(post_path, 'w', encoding='utf-8') as f:
+        f.write(frontmatter)
+
+    print(f"Created Hugo post: {post_path}")
+
+
+async def handle_image_selection(paired_files_json: Dict, bundle_dir: str, all_generated_files: List[str], output_dir: str) -> None:
+    """Handle user selection of images and move them to page bundle."""
+    import shutil
+
+    generated_pairs = paired_files_json.get('generated_files', [])
+
+    if not generated_pairs:
+        print("No complete cover/banner pairs were generated.")
+        return
+
+    print(f"\nGenerated {len(generated_pairs)} complete cover/banner pairs:")
+    for i, pair in enumerate(generated_pairs, 1):
+        cover_file = os.path.basename(pair['cover'])
+        banner_file = os.path.basename(pair['banner'])
+        print(f"{i}. Cover: {cover_file}")
+        print(f"   Banner: {banner_file}")
+
+    # Get user selection
+    while True:
+        try:
+            choice = input(f"\nSelect which pair to use (1-{len(generated_pairs)}): ").strip()
+            selected_index = int(choice) - 1
+            if 0 <= selected_index < len(generated_pairs):
+                break
+            else:
+                print(f"Please enter a number between 1 and {len(generated_pairs)}")
+        except ValueError:
+            print("Please enter a valid number")
+
+    selected_pair = generated_pairs[selected_index]
+
+    # Move selected images to page bundle directory
+    cover_filename = selected_pair['cover']
+    banner_filename = selected_pair['banner']
+
+    # Construct full paths from output directory
+    cover_src = os.path.join(output_dir, cover_filename)
+    banner_src = os.path.join(output_dir, banner_filename)
+
+    cover_dest = os.path.join(bundle_dir, 'cover.svg')
+    banner_dest = os.path.join(bundle_dir, 'banner.svg')
+
+    shutil.move(cover_src, cover_dest)
+    shutil.move(banner_src, banner_dest)
+
+    print(f"\nMoved selected images to page bundle:")
+    print(f"  Cover: {cover_dest}")
+    print(f"  Banner: {banner_dest}")
+
+    # Clean up remaining generated files
+    for filename in all_generated_files:
+        filepath = os.path.join(output_dir, filename)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+            print(f"  Removed: {filename}")
+
+    print("\nPage bundle setup complete!")
+
+
 async def main():
     parser = argparse.ArgumentParser(description='Generate library images from ISBN')
     parser.add_argument('isbn', help='ISBN of the book')
@@ -262,6 +365,10 @@ async def main():
 
         print(f"Found: {book.title} by {book.author}")
 
+        # Create Hugo library post if we're in creation mode
+        if args.create:
+            await create_hugo_post(book, isbn_dir)
+
         if args.direct:
             # Direct mode - generate SVGs from text only
             print("Using direct mode - generating SVGs from text only...")
@@ -324,6 +431,10 @@ async def main():
         # Output paired SVG files as second JSON
         paired_files_json = group_files_by_pairs(generated_files)
         print(json.dumps(paired_files_json, indent=2))
+
+        # Handle image selection and cleanup if in creation mode
+        if args.create:
+            await handle_image_selection(paired_files_json, isbn_dir, generated_files, output_dir)
 
     except Exception as e:
         print(f"Error: {e}")
