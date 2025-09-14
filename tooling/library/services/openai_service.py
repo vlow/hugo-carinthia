@@ -46,6 +46,20 @@ class OpenAIService(LLMInterface):
 
         return template.format(**format_dict)
 
+    def _clean_reasoning_output(self, response: str) -> str:
+        """Clean GPT-5 reasoning output to extract only the final prompt."""
+        # Remove thinking tags and reasoning content
+        import re
+
+        # Remove <thinking>...</thinking> blocks
+        response = re.sub(r'<thinking>.*?</thinking>', '', response, flags=re.DOTALL)
+
+        # Remove any remaining XML-like tags that might contain reasoning
+        response = re.sub(r'<[^>]+>.*?</[^>]+>', '', response, flags=re.DOTALL)
+
+        # Clean up extra whitespace and return clean prompt
+        return response.strip()
+
     async def generate_cover_svg(self, cover_image_path: str, book: Book) -> str:
         """Generate a 236x327px cover SVG based on the original cover."""
         template = self._load_prompt_template("cover_svg_prompt.txt")
@@ -171,8 +185,7 @@ class OpenAIService(LLMInterface):
                 reasoning_effort="medium"
             )
 
-            enhanced_prompt = enhanced_prompt_response.choices[0].message.content.strip()
-            print(f"GPT-5 enhanced prompt: {enhanced_prompt[:100]}...")
+            enhanced_prompt = self._clean_reasoning_output(enhanced_prompt_response.choices[0].message.content)
 
             # Use the enhanced prompt for DALL-E 3 image generation
             response = await self.client.images.generate(

@@ -28,7 +28,12 @@ class CoverLookupService:
 
     async def download_cover(self, book: Book) -> Optional[str]:
         """Download cover image trying each service in order until one succeeds."""
-        for service in self.services:
+        # Try non-AI sources first
+        non_ai_services = [s for s in self.services if not isinstance(s, AICoverGeneratorService)]
+        ai_services = [s for s in self.services if isinstance(s, AICoverGeneratorService)]
+
+        # First try all non-AI sources
+        for service in non_ai_services:
             try:
                 cover_path = await service.download_cover(book)
                 if cover_path:
@@ -36,5 +41,20 @@ class CoverLookupService:
             except Exception as e:
                 print(f"Error with {service.__class__.__name__}: {e}")
                 continue
+
+        # If no cover found from regular sources, inform user and try AI generation
+        if ai_services:
+            print("No cover image found from available sources (Google Books, Goodreads).")
+            print("Generating AI cover image as fallback...")
+            print("Tip: Use the -d/--direct flag to skip cover image generation and create vector graphics directly from text.")
+
+            for service in ai_services:
+                try:
+                    cover_path = await service.download_cover(book)
+                    if cover_path:
+                        return cover_path
+                except Exception as e:
+                    print(f"Error with {service.__class__.__name__}: {e}")
+                    continue
 
         return None

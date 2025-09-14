@@ -77,6 +77,7 @@ class GoodreadsCoverService(CoverLookupInterface):
                     with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp_file:
                         content = await response.read()
                         tmp_file.write(content)
+                        print(f"Goodreads cover downloaded to: {tmp_file.name}")
                         return tmp_file.name
 
             except Exception as e:

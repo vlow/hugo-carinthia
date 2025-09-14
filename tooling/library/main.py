@@ -96,7 +96,7 @@ async def generate_and_download_cover(book: Book, models: List[str]) -> Optional
                             async for chunk in response.content.iter_chunked(8192):
                                 f.write(chunk)
 
-                        print("Generated cover downloaded to temporary file")
+                        print(f"AI cover downloaded to: {temp_path}")
                         return temp_path
                     else:
                         print(f"Failed to download generated cover (status: {response.status})")
@@ -111,7 +111,7 @@ async def generate_and_download_cover(book: Book, models: List[str]) -> Optional
 
 
 async def generate_svg_pair(book: Book, cover_path: str, models: List[str],
-                           overflow_fixer: SimpleOverflowFixer, generation_id: int) -> List[str]:
+                           overflow_fixer: SimpleOverflowFixer, generation_id: int, output_dir: str = ".") -> List[str]:
     """Generate one complete set of SVG files for all specified models."""
     # Generate unique timestamp and hash for this generation
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -131,8 +131,9 @@ async def generate_svg_pair(book: Book, cover_path: str, models: List[str],
         # Apply minimal overflow fixes if needed
         corrected_cover_svg = overflow_fixer.fix_overflow(cover_svg, 'cover')
         cover_filename = f"{random_hash}_{book.isbn}_cover{model_suffix}_{timestamp}.svg"
+        cover_filepath = os.path.join(output_dir, cover_filename)
 
-        with open(cover_filename, 'w') as f:
+        with open(cover_filepath, 'w') as f:
             f.write(corrected_cover_svg)
         print(f"Generation {generation_id}: Generated {cover_filename}")
         generated_files.append(cover_filename)
@@ -143,8 +144,9 @@ async def generate_svg_pair(book: Book, cover_path: str, models: List[str],
         # Apply minimal overflow fixes if needed
         corrected_banner_svg = overflow_fixer.fix_overflow(banner_svg, 'banner')
         banner_filename = f"{random_hash}_{book.isbn}_banner{model_suffix}_{timestamp}.svg"
+        banner_filepath = os.path.join(output_dir, banner_filename)
 
-        with open(banner_filename, 'w') as f:
+        with open(banner_filepath, 'w') as f:
             f.write(corrected_banner_svg)
         print(f"Generation {generation_id}: Generated {banner_filename}")
         generated_files.append(banner_filename)
@@ -153,7 +155,7 @@ async def generate_svg_pair(book: Book, cover_path: str, models: List[str],
 
 
 async def generate_svg_pair_direct(book: Book, models: List[str],
-                                  overflow_fixer: SimpleOverflowFixer, generation_id: int) -> List[str]:
+                                  overflow_fixer: SimpleOverflowFixer, generation_id: int, output_dir: str = ".") -> List[str]:
     """Generate one complete set of SVG files using direct text-only generation."""
     # Generate unique timestamp and hash for this generation
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -173,8 +175,9 @@ async def generate_svg_pair_direct(book: Book, models: List[str],
         # Apply minimal overflow fixes if needed
         corrected_cover_svg = overflow_fixer.fix_overflow(cover_svg, 'cover')
         cover_filename = f"{random_hash}_{book.isbn}_cover{model_suffix}_{timestamp}.svg"
+        cover_filepath = os.path.join(output_dir, cover_filename)
 
-        with open(cover_filename, 'w') as f:
+        with open(cover_filepath, 'w') as f:
             f.write(corrected_cover_svg)
         print(f"Generation {generation_id}: Generated {cover_filename}")
         generated_files.append(cover_filename)
@@ -185,8 +188,9 @@ async def generate_svg_pair_direct(book: Book, models: List[str],
         # Apply minimal overflow fixes if needed
         corrected_banner_svg = overflow_fixer.fix_overflow(banner_svg, 'banner')
         banner_filename = f"{random_hash}_{book.isbn}_banner{model_suffix}_{timestamp}.svg"
+        banner_filepath = os.path.join(output_dir, banner_filename)
 
-        with open(banner_filename, 'w') as f:
+        with open(banner_filepath, 'w') as f:
             f.write(corrected_banner_svg)
         print(f"Generation {generation_id}: Generated {banner_filename}")
         generated_files.append(banner_filename)
@@ -200,12 +204,14 @@ async def main():
     parser.add_argument('--model', choices=['gpt-5', 'claude'],
                        help='LLM model to use (can be specified multiple times)',
                        action='append')
-    parser.add_argument('-n', '--parallel', type=int, default=1,
-                       help='Number of parallel generations to create (default: 1)')
+    parser.add_argument('-n', '--parallel', type=int, default=8,
+                       help='Number of parallel generations to create (default: 8)')
     parser.add_argument('-g', '--generate-cover', action='store_true',
                        help='Use LLM-generated cover image instead of downloading original cover')
     parser.add_argument('-d', '--direct', action='store_true',
                        help='Generate SVGs directly from book description without any cover image')
+    parser.add_argument('-c', '--create', type=str, metavar='PATH',
+                       help='Create post directory structure in the specified path')
 
     args = parser.parse_args()
 
@@ -216,6 +222,29 @@ async def main():
     if args.generate_cover and args.direct:
         print("Error: Cannot use both --generate-cover (-g) and --direct (-d) flags together")
         sys.exit(1)
+
+    # Handle --create parameter
+    output_dir = "."  # Default to current directory
+    if args.create:
+        # Check if the provided path exists
+        if not os.path.isdir(args.create):
+            print(f"Error: Directory '{args.create}' does not exist")
+            sys.exit(1)
+
+        # Normalize ISBN by removing dashes
+        normalized_isbn = args.isbn.replace('-', '')
+
+        # Create subdirectory with normalized ISBN
+        isbn_dir = os.path.join(args.create, normalized_isbn)
+
+        # Check if directory already exists
+        if os.path.exists(isbn_dir):
+            print(f"Error: Directory '{isbn_dir}' already exists")
+            sys.exit(1)
+
+        os.makedirs(isbn_dir)
+        output_dir = isbn_dir
+        print(f"Created directory: {isbn_dir}")
 
     try:
         # Initialize services
@@ -241,7 +270,7 @@ async def main():
             print(f"Starting {args.parallel} parallel direct generations...")
             tasks = []
             for i in range(args.parallel):
-                task = generate_svg_pair_direct(book, args.model, overflow_fixer, i + 1)
+                task = generate_svg_pair_direct(book, args.model, overflow_fixer, i + 1, output_dir)
                 tasks.append(task)
 
             # Run all generations in parallel
@@ -266,7 +295,7 @@ async def main():
             print(f"Starting {args.parallel} parallel generations...")
             tasks = []
             for i in range(args.parallel):
-                task = generate_svg_pair(book, cover_path, args.model, overflow_fixer, i + 1)
+                task = generate_svg_pair(book, cover_path, args.model, overflow_fixer, i + 1, output_dir)
                 tasks.append(task)
 
             # Run all generations in parallel
