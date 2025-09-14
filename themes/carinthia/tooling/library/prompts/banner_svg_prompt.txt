@@ -3,8 +3,6 @@ You are an expert SVG designer tasked with creating a horizontal banner image ba
 Book Information:
 - Title: {title}
 - Author: {author}
-- Publication Year: {publication_year}
-- Pages: {pages}
 
 Context:
 - You are provided with the ORIGINAL book cover image

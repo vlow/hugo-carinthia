@@ -3,8 +3,6 @@ You are an expert SVG designer tasked with creating a stylized book cover image 
 Book Information:
 - Title: {title}
 - Author: {author}
-- Publication Year: {publication_year}
-- Pages: {pages}
 
 Requirements:
 - Create an SVG with dimensions 236x327px

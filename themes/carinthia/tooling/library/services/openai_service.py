@@ -37,8 +37,6 @@ class OpenAIService(LLMInterface):
         format_dict = {
             'title': book.title or "Unknown Title",
             'author': book.author or "Unknown Author",
-            'publication_year': book.publication_year or "Unknown",
-            'pages': book.pages or "Unknown",
             'description': book.description or "No description available"
         }
 
