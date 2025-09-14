@@ -16,6 +16,7 @@ Requirements:
 - Adapt the SVG cover's elements to work in a wide horizontal format
 - Include the book's title and author name prominently
 - The design should work well as a header banner for a book's detail page
+- For text elements, use textLength="480" for titles and textLength="400" for authors to ensure proper fit
 - Output only the complete SVG code, no additional text or explanations
 
 Style Guidelines:

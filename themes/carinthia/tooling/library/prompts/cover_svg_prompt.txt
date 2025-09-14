@@ -12,6 +12,7 @@ Requirements:
 - Use a color palette that complements or is inspired by the original cover
 - Ensure text is readable and well-positioned
 - The design should work well in a library list view context
+- For text elements, use textLength="210" to ensure text fits within margins
 - Output only the complete SVG code, no additional text or explanations
 
 Style Guidelines:

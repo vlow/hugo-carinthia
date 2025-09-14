@@ -16,6 +16,7 @@ from typing import List, Optional
 from services.content_lookup import ContentLookupService
 from services.cover_lookup import CoverLookupService
 from services.llm_service import LLMService
+from services.simple_overflow_fixer import SimpleOverflowFixer
 from models.book import Book
 
 
@@ -36,6 +37,7 @@ async def main():
         content_service = ContentLookupService()
         cover_service = CoverLookupService()
         llm_services = [LLMService.create(model) for model in args.model]
+        overflow_fixer = SimpleOverflowFixer()
 
         # Look up book metadata
         print(f"Looking up book metadata for ISBN: {args.isbn}")
@@ -63,18 +65,24 @@ async def main():
 
             # Generate cover image (236x327px)
             cover_svg = await llm_service.generate_cover_svg(cover_path, book)
+
+            # Apply minimal overflow fixes if needed
+            corrected_cover_svg = overflow_fixer.fix_overflow(cover_svg, 'cover')
             cover_filename = f"{book.isbn}_cover{model_suffix}.svg"
 
             with open(cover_filename, 'w') as f:
-                f.write(cover_svg)
+                f.write(corrected_cover_svg)
             print(f"Generated: {cover_filename}")
 
-            # Generate banner image (1024x200px) based on cover SVG
-            banner_svg = await llm_service.generate_banner_svg(cover_path, book, cover_svg)
+            # Generate banner image (1024x200px) based on corrected cover SVG
+            banner_svg = await llm_service.generate_banner_svg(cover_path, book, corrected_cover_svg)
+
+            # Apply minimal overflow fixes if needed
+            corrected_banner_svg = overflow_fixer.fix_overflow(banner_svg, 'banner')
             banner_filename = f"{book.isbn}_banner{model_suffix}.svg"
 
             with open(banner_filename, 'w') as f:
-                f.write(banner_svg)
+                f.write(corrected_banner_svg)
             print(f"Generated: {banner_filename}")
 
         # Output book metadata as JSON
