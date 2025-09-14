@@ -9,12 +9,13 @@ Takes an ISBN as input and creates themed SVG images using multimodal LLMs.
 import argparse
 import asyncio
 import json
+import os
 import secrets
 import sys
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 import aiohttp
 
@@ -23,6 +24,47 @@ from services.cover_lookup import CoverLookupService
 from services.llm_service import LLMService
 from services.simple_overflow_fixer import SimpleOverflowFixer
 from models.book import Book
+
+
+def group_files_by_pairs(generated_files: List[str]) -> Dict:
+    """Group generated SVG files by their hash prefix to create cover/banner pairs."""
+    pairs = {}
+
+    for filename in generated_files:
+        # Extract hash from filename (format: hash_isbn_type[_model]_timestamp.svg)
+        # The hash is always the first part before the first underscore
+        if '_' in filename:
+            hash_prefix = filename.split('_')[0]
+
+            # Determine if this is a cover or banner
+            if '_cover' in filename:
+                file_type = 'cover'
+            elif '_banner' in filename:
+                file_type = 'banner'
+            else:
+                continue
+
+            # Initialize pair if not exists
+            if hash_prefix not in pairs:
+                pairs[hash_prefix] = {
+                    'hash': hash_prefix,
+                    'cover': None,
+                    'banner': None
+                }
+
+            # Get full absolute path
+            full_path = os.path.abspath(filename)
+            pairs[hash_prefix][file_type] = full_path
+
+    # Convert to list and filter out incomplete pairs
+    paired_files = []
+    for pair in pairs.values():
+        if pair['cover'] and pair['banner']:
+            paired_files.append(pair)
+
+    return {
+        'generated_files': paired_files
+    }
 
 
 async def generate_and_download_cover(book: Book, models: List[str]) -> Optional[str]:
@@ -249,6 +291,10 @@ async def main():
         # Output book metadata as JSON
         book_json = book.to_dict()
         print(json.dumps(book_json, indent=2))
+
+        # Output paired SVG files as second JSON
+        paired_files_json = group_files_by_pairs(generated_files)
+        print(json.dumps(paired_files_json, indent=2))
 
     except Exception as e:
         print(f"Error: {e}")
