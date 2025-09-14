@@ -45,7 +45,8 @@ class ClaudeService(LLMInterface):
         format_dict = {
             'title': book.title or "Unknown Title",
             'author': book.author or "Unknown Author",
-            'description': book.description or "No description available"
+            'description': book.description or "No description available",
+            'publication_year': book.publication_year or "Unknown"
         }
 
         if cover_svg is not None:

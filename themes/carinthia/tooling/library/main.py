@@ -11,15 +11,61 @@ import asyncio
 import json
 import secrets
 import sys
+import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
+
+import aiohttp
 
 from services.content_lookup import ContentLookupService
 from services.cover_lookup import CoverLookupService
 from services.llm_service import LLMService
 from services.simple_overflow_fixer import SimpleOverflowFixer
 from models.book import Book
+
+
+async def generate_and_download_cover(book: Book, models: List[str]) -> Optional[str]:
+    """Generate a cover image using LLM and download it to a temporary file."""
+    # Try each model until one succeeds in generating an image
+    for model in models:
+        try:
+            llm_service = LLMService.create(model)
+            print(f"Generating cover image using {model}...")
+
+            # Generate cover image URL
+            cover_url = await llm_service.generate_cover_image(book)
+            if not cover_url:
+                print(f"{model} does not support cover image generation")
+                continue
+
+            print(f"Downloading generated cover from {model}...")
+
+            # Download the generated image
+            async with aiohttp.ClientSession() as session:
+                async with session.get(cover_url) as response:
+                    if response.status == 200:
+                        # Create temporary file
+                        suffix = '.jpg'  # Most AI-generated images are JPEG
+                        temp_fd, temp_path = tempfile.mkstemp(suffix=suffix)
+
+                        # Write image data to temp file
+                        with open(temp_fd, 'wb') as f:
+                            async for chunk in response.content.iter_chunked(8192):
+                                f.write(chunk)
+
+                        print(f"Generated cover downloaded to temporary file")
+                        return temp_path
+                    else:
+                        print(f"Failed to download generated cover (status: {response.status})")
+                        continue
+
+        except Exception as e:
+            print(f"Error generating cover with {model}: {e}")
+            continue
+
+    print("Failed to generate cover image with any available model")
+    return None
 
 
 async def generate_svg_pair(book: Book, cover_path: str, models: List[str],
@@ -72,6 +118,8 @@ async def main():
                        action='append')
     parser.add_argument('-n', '--parallel', type=int, default=1,
                        help='Number of parallel generations to create (default: 1)')
+    parser.add_argument('-g', '--generate-cover', action='store_true',
+                       help='Use LLM-generated cover image instead of downloading original cover')
 
     args = parser.parse_args()
 
@@ -94,12 +142,17 @@ async def main():
 
         print(f"Found: {book.title} by {book.author}")
 
-        # Download cover image
-        print("Downloading cover image...")
-        cover_path = await cover_service.download_cover(book)
+        # Get cover image - either download original or generate new one
+        if args.generate_cover:
+            print("Generating cover image with LLM...")
+            cover_path = await generate_and_download_cover(book, args.model)
+        else:
+            print("Downloading original cover image...")
+            cover_path = await cover_service.download_cover(book)
 
         if not cover_path:
-            print("Could not download cover image")
+            action = "generate" if args.generate_cover else "download"
+            print(f"Could not {action} cover image")
             sys.exit(1)
 
         # Create parallel generation tasks
@@ -125,9 +178,11 @@ async def main():
         book_json = book.to_dict()
         print(json.dumps(book_json, indent=2))
 
-        # Clean up temporary cover file
+        # Clean up temporary cover file (whether downloaded or generated)
         if cover_path and Path(cover_path).exists():
             Path(cover_path).unlink()
+            action = "Generated" if args.generate_cover else "Downloaded"
+            print(f"{action} cover file cleaned up")
 
     except Exception as e:
         print(f"Error: {e}")

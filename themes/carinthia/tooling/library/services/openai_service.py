@@ -37,7 +37,8 @@ class OpenAIService(LLMInterface):
         format_dict = {
             'title': book.title or "Unknown Title",
             'author': book.author or "Unknown Author",
-            'description': book.description or "No description available"
+            'description': book.description or "No description available",
+            'publication_year': book.publication_year or "Unknown"
         }
 
         if cover_svg is not None:
@@ -108,15 +109,36 @@ class OpenAIService(LLMInterface):
         return response.choices[0].message.content.strip()
 
     async def generate_cover_image(self, book: Book) -> Optional[str]:
-        """Generate an alternative cover image using DALL-E."""
+        """Generate an alternative cover image using GPT-5 enhanced prompts with DALL-E 3."""
         template = self._load_prompt_template("cover_generation_prompt.txt")
-        prompt = self._format_prompt(template, book)
+        base_prompt = self._format_prompt(template, book)
 
         try:
+            # Use GPT-5 to enhance and refine the image generation prompt
+            enhancement_template = self._load_prompt_template("image_enhancement_prompt.txt")
+            enhancement_prompt = enhancement_template.format(base_prompt=base_prompt)
+
+            enhanced_prompt_response = await self.client.chat.completions.create(
+                model="gpt-5",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": enhancement_prompt
+                    }
+                ],
+                max_completion_tokens=16000,
+                temperature=1,
+                reasoning_effort="medium"
+            )
+
+            enhanced_prompt = enhanced_prompt_response.choices[0].message.content.strip()
+            print(f"GPT-5 enhanced prompt: {enhanced_prompt[:100]}...")
+
+            # Use the enhanced prompt for DALL-E 3 image generation
             response = await self.client.images.generate(
-                model="dall-e-3",  # Latest DALL-E model
-                prompt=prompt,
-                size="1024x1024",
+                model="dall-e-3",  # DALL-E 3 for image generation
+                prompt=enhanced_prompt,
+                size="1024x1792",
                 quality="standard",
                 n=1,
             )
@@ -124,5 +146,5 @@ class OpenAIService(LLMInterface):
             return response.data[0].url
 
         except Exception as e:
-            print(f"Error generating cover image with DALL-E: {e}")
+            print(f"Error generating cover image with GPT-5 + DALL-E 3: {e}")
             return None
