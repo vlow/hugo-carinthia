@@ -110,6 +110,48 @@ async def generate_svg_pair(book: Book, cover_path: str, models: List[str],
     return generated_files
 
 
+async def generate_svg_pair_direct(book: Book, models: List[str],
+                                  overflow_fixer: SimpleOverflowFixer, generation_id: int) -> List[str]:
+    """Generate one complete set of SVG files using direct text-only generation."""
+    # Generate unique timestamp and hash for this generation
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    random_hash = secrets.token_hex(2)
+
+    generated_files = []
+    llm_services = [LLMService.create(model) for model in models]
+
+    for i, llm_service in enumerate(llm_services):
+        model_suffix = f"_{models[i]}" if len(models) > 1 else ""
+
+        print(f"Generation {generation_id}: Generating images with {models[i]} (direct mode)...")
+
+        # Generate cover image (236x327px) directly from text
+        cover_svg = await llm_service.generate_cover_svg_direct(book)
+
+        # Apply minimal overflow fixes if needed
+        corrected_cover_svg = overflow_fixer.fix_overflow(cover_svg, 'cover')
+        cover_filename = f"{random_hash}_{book.isbn}_cover{model_suffix}_{timestamp}.svg"
+
+        with open(cover_filename, 'w') as f:
+            f.write(corrected_cover_svg)
+        print(f"Generation {generation_id}: Generated {cover_filename}")
+        generated_files.append(cover_filename)
+
+        # Generate banner image (1024x200px) based on corrected cover SVG only
+        banner_svg = await llm_service.generate_banner_svg_direct(book, corrected_cover_svg)
+
+        # Apply minimal overflow fixes if needed
+        corrected_banner_svg = overflow_fixer.fix_overflow(banner_svg, 'banner')
+        banner_filename = f"{random_hash}_{book.isbn}_banner{model_suffix}_{timestamp}.svg"
+
+        with open(banner_filename, 'w') as f:
+            f.write(corrected_banner_svg)
+        print(f"Generation {generation_id}: Generated {banner_filename}")
+        generated_files.append(banner_filename)
+
+    return generated_files
+
+
 async def main():
     parser = argparse.ArgumentParser(description='Generate library images from ISBN')
     parser.add_argument('isbn', help='ISBN of the book')
@@ -120,11 +162,18 @@ async def main():
                        help='Number of parallel generations to create (default: 1)')
     parser.add_argument('-g', '--generate-cover', action='store_true',
                        help='Use LLM-generated cover image instead of downloading original cover')
+    parser.add_argument('-d', '--direct', action='store_true',
+                       help='Generate SVGs directly from book description without any cover image')
 
     args = parser.parse_args()
 
     if not args.model:
         args.model = ['gpt-5']
+
+    # Validate conflicting flags
+    if args.generate_cover and args.direct:
+        print("Error: Cannot use both --generate-cover (-g) and --direct (-d) flags together")
+        sys.exit(1)
 
     try:
         # Initialize services
@@ -142,47 +191,64 @@ async def main():
 
         print(f"Found: {book.title} by {book.author}")
 
-        # Get cover image - either download original or generate new one
-        if args.generate_cover:
-            print("Generating cover image with LLM...")
-            cover_path = await generate_and_download_cover(book, args.model)
+        if args.direct:
+            # Direct mode - generate SVGs from text only
+            print("Using direct mode - generating SVGs from text only...")
+
+            # Create parallel generation tasks for direct mode
+            print(f"Starting {args.parallel} parallel direct generations...")
+            tasks = []
+            for i in range(args.parallel):
+                task = generate_svg_pair_direct(book, args.model, overflow_fixer, i + 1)
+                tasks.append(task)
+
+            # Run all generations in parallel
+            all_generated_files = await asyncio.gather(*tasks)
+
         else:
-            print("Downloading original cover image...")
-            cover_path = await cover_service.download_cover(book)
+            # Standard mode - use cover images
+            # Get cover image - either download original or generate new one
+            if args.generate_cover:
+                print("Generating cover image with LLM...")
+                cover_path = await generate_and_download_cover(book, args.model)
+            else:
+                print("Downloading original cover image...")
+                cover_path = await cover_service.download_cover(book)
 
-        if not cover_path:
-            action = "generate" if args.generate_cover else "download"
-            print(f"Could not {action} cover image")
-            sys.exit(1)
+            if not cover_path:
+                action = "generate" if args.generate_cover else "download"
+                print(f"Could not {action} cover image")
+                sys.exit(1)
 
-        # Create parallel generation tasks
-        print(f"Starting {args.parallel} parallel generations...")
-        tasks = []
-        for i in range(args.parallel):
-            task = generate_svg_pair(book, cover_path, args.model, overflow_fixer, i + 1)
-            tasks.append(task)
+            # Create parallel generation tasks
+            print(f"Starting {args.parallel} parallel generations...")
+            tasks = []
+            for i in range(args.parallel):
+                task = generate_svg_pair(book, cover_path, args.model, overflow_fixer, i + 1)
+                tasks.append(task)
 
-        # Run all generations in parallel
-        all_generated_files = await asyncio.gather(*tasks)
+            # Run all generations in parallel
+            all_generated_files = await asyncio.gather(*tasks)
+
+            # Clean up temporary cover file (whether downloaded or generated)
+            if cover_path and Path(cover_path).exists():
+                Path(cover_path).unlink()
+                action = "Generated" if args.generate_cover else "Downloaded"
+                print(f"{action} cover file cleaned up")
 
         # Flatten the list of lists
         generated_files = []
         for file_list in all_generated_files:
             generated_files.extend(file_list)
 
-        print(f"\nCompleted {args.parallel} generations:")
+        mode_text = "direct " if args.direct else ""
+        print(f"\nCompleted {args.parallel} {mode_text}generations:")
         for filename in generated_files:
             print(f"  {filename}")
 
         # Output book metadata as JSON
         book_json = book.to_dict()
         print(json.dumps(book_json, indent=2))
-
-        # Clean up temporary cover file (whether downloaded or generated)
-        if cover_path and Path(cover_path).exists():
-            Path(cover_path).unlink()
-            action = "Generated" if args.generate_cover else "Downloaded"
-            print(f"{action} cover file cleaned up")
 
     except Exception as e:
         print(f"Error: {e}")

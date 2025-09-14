@@ -108,6 +108,46 @@ class OpenAIService(LLMInterface):
 
         return response.choices[0].message.content.strip()
 
+    async def generate_cover_svg_direct(self, book: Book) -> str:
+        """Generate a 236x327px cover SVG based solely on book text information."""
+        template = self._load_prompt_template("direct_cover_svg_prompt.txt")
+        prompt = self._format_prompt(template, book)
+
+        response = await self.client.chat.completions.create(
+            model="gpt-5",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            max_completion_tokens=16000,
+            temperature=1,
+            reasoning_effort="high"  # Use high reasoning effort for creative design decisions
+        )
+
+        return response.choices[0].message.content.strip()
+
+    async def generate_banner_svg_direct(self, book: Book, cover_svg: str) -> str:
+        """Generate a 1024x200px banner SVG based solely on the stylized SVG cover."""
+        template = self._load_prompt_template("direct_banner_svg_prompt.txt")
+        prompt = self._format_prompt(template, book, cover_svg)
+
+        response = await self.client.chat.completions.create(
+            model="gpt-5",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            max_completion_tokens=16000,
+            temperature=1,
+            reasoning_effort="high"  # Use high reasoning effort for creative design decisions
+        )
+
+        return response.choices[0].message.content.strip()
+
     async def generate_cover_image(self, book: Book) -> Optional[str]:
         """Generate an alternative cover image using GPT-5 enhanced prompts with DALL-E 3."""
         template = self._load_prompt_template("cover_generation_prompt.txt")

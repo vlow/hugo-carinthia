@@ -124,6 +124,44 @@ class ClaudeService(LLMInterface):
 
         return message.content[0].text.strip()
 
+    async def generate_cover_svg_direct(self, book: Book) -> str:
+        """Generate a 236x327px cover SVG based solely on book text information."""
+        template = self._load_prompt_template("direct_cover_svg_prompt.txt")
+        prompt = self._format_prompt(template, book)
+
+        message = await self.client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=4000,
+            temperature=0.7,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
+
+        return message.content[0].text.strip()
+
+    async def generate_banner_svg_direct(self, book: Book, cover_svg: str) -> str:
+        """Generate a 1024x200px banner SVG based solely on the stylized SVG cover."""
+        template = self._load_prompt_template("direct_banner_svg_prompt.txt")
+        prompt = self._format_prompt(template, book, cover_svg)
+
+        message = await self.client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=4000,
+            temperature=0.7,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
+
+        return message.content[0].text.strip()
+
     async def generate_cover_image(self, book: Book) -> Optional[str]:
         """Claude cannot generate images, so this returns None."""
         print("Claude does not support image generation. Skipping cover image generation.")

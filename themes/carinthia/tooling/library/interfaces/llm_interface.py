@@ -36,6 +36,31 @@ class LLMInterface(ABC):
         pass
 
     @abstractmethod
+    async def generate_banner_svg_direct(self, book: Book, cover_svg: str) -> str:
+        """Generate a 1024x200px banner SVG based solely on the stylized SVG cover.
+
+        Args:
+            book: Book metadata
+            cover_svg: The generated SVG cover code for consistency
+
+        Returns:
+            SVG code as string
+        """
+        pass
+
+    @abstractmethod
+    async def generate_cover_svg_direct(self, book: Book) -> str:
+        """Generate a 236x327px cover SVG based solely on book text information.
+
+        Args:
+            book: Book metadata
+
+        Returns:
+            SVG code as string
+        """
+        pass
+
+    @abstractmethod
     async def generate_cover_image(self, book: Book) -> Optional[str]:
         """Generate an alternative cover image using AI.
 

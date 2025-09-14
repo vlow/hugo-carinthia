@@ -1,0 +1,38 @@
+You are an expert SVG designer tasked with creating a book cover image based solely on text information.
+
+Book Information:
+- Title: {title}
+- Author: {author}
+- Description: {description}
+
+Requirements:
+- Create an SVG with dimensions 236x327px
+- Design the cover based entirely on the book's title, author, and description
+- Use clean, modern design principles appropriate for the book's genre and mood
+- Incorporate the book's title and author name prominently
+- Choose a color palette that reflects the book's content, themes, and genre
+- Ensure text is readable and well-positioned
+- The design should work well in a library list view context
+- For text elements, use textLength="210" to ensure text fits within margins
+- Output only the complete SVG code, no additional text or explanations
+
+Design Guidelines:
+- Analyze the book's description to determine genre (fiction, non-fiction, mystery, romance, sci-fi, etc.)
+- Choose typography that matches the book's mood and genre
+- Use appropriate color schemes based on the book's themes and content
+- Create visual elements that represent the book's subject matter or atmosphere
+- Keep the design clean and minimalist while being visually engaging
+- Use proper typography hierarchy (title larger than author)
+- Ensure good contrast for readability
+- Position text in safe zones away from edges (center or with adequate margins)
+- Consider using geometric shapes, gradients, or abstract patterns that reflect the book's content
+
+Genre-Specific Considerations:
+- Fiction: Focus on mood and atmosphere suggested by the description
+- Non-fiction: Use clean, professional design with topic-relevant visual elements
+- Mystery/Thriller: Use darker colors, dramatic typography, intriguing visual elements
+- Romance: Use warmer colors, elegant typography, soft visual elements
+- Science Fiction: Use futuristic colors, modern typography, tech-inspired elements
+- Historical: Use period-appropriate color palettes and classical typography
+
+Create a compelling book cover that would attract readers and accurately represent the book's content based solely on the provided text information.
