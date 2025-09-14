@@ -71,24 +71,23 @@ class SimpleOverflowFixer:
         except ValueError:
             return False
 
-        # Extract font size
-        font_size = self._extract_font_size(text_element)
+        # Get text width (preferring textLength if available)
+        text_width = self._get_text_width(text_element)
 
-        # Extract text content
-        text_content = self._extract_text_content(text_element)
+        # Get text anchor to determine how x position relates to text bounds
+        text_anchor = self._extract_text_anchor(text_element)
 
-        # Estimate text width
-        estimated_width = len(text_content) * font_size * self.avg_char_width
+        # Calculate actual left and right edges based on text-anchor
+        left_edge, right_edge = self._calculate_text_bounds(x_pos, text_width, text_anchor)
 
-        # Check if text likely extends beyond safe area
-        text_end = x_pos + estimated_width
-        safe_boundary = canvas_width - margin
+        # Check if text overflows beyond safe boundaries
+        safe_left = margin
+        safe_right = canvas_width - margin
 
-        # Also check if starting too close to left edge
-        too_close_to_left = x_pos < margin
-        extends_too_far_right = text_end > safe_boundary
+        overflows_left = left_edge < safe_left
+        overflows_right = right_edge > safe_right
 
-        return too_close_to_left or extends_too_far_right
+        return overflows_left or overflows_right
 
     def _extract_font_size(self, text_element: str) -> float:
         """Extract font size from text element."""
@@ -117,6 +116,55 @@ class SimpleOverflowFixer:
         content = re.sub(r'<[^>]*>', ' ', text_element)
         return content.strip()
 
+    def _get_text_width(self, text_element: str) -> float:
+        """Get text width, preferring textLength if available, otherwise estimate."""
+        # Check for textLength attribute (most accurate)
+        textlength_match = re.search(r'textLength="([^"]*)"', text_element)
+        if textlength_match:
+            try:
+                return float(textlength_match.group(1))
+            except ValueError:
+                pass
+
+        # Fallback to estimation
+        font_size = self._extract_font_size(text_element)
+        text_content = self._extract_text_content(text_element)
+        return len(text_content) * font_size * self.avg_char_width
+
+    def _extract_text_anchor(self, text_element: str) -> str:
+        """Extract text-anchor value, defaulting to 'start'."""
+        anchor_match = re.search(r'text-anchor="([^"]*)"', text_element)
+        if anchor_match:
+            return anchor_match.group(1)
+
+        # Check in style attribute
+        style_match = re.search(r'style="([^"]*)"', text_element)
+        if style_match:
+            style = style_match.group(1)
+            anchor_style_match = re.search(r'text-anchor:\s*([^;]+)', style)
+            if anchor_style_match:
+                return anchor_style_match.group(1).strip()
+
+        return 'start'  # Default SVG text-anchor value
+
+    def _calculate_text_bounds(self, x_pos: float, text_width: float, text_anchor: str) -> tuple[float, float]:
+        """Calculate left and right edges based on x position, width, and anchor."""
+        if text_anchor == 'middle':
+            # x is center of text
+            half_width = text_width / 2
+            left_edge = x_pos - half_width
+            right_edge = x_pos + half_width
+        elif text_anchor == 'end':
+            # x is right edge of text
+            left_edge = x_pos - text_width
+            right_edge = x_pos
+        else:  # 'start' or any other value
+            # x is left edge of text
+            left_edge = x_pos
+            right_edge = x_pos + text_width
+
+        return left_edge, right_edge
+
     def _apply_minimal_fix(self, text_match, canvas_width: int, margin: int) -> str:
         """Apply minimal correction to text element."""
         text_element = text_match.group(0)
@@ -141,20 +189,47 @@ class SimpleOverflowFixer:
         except ValueError:
             return text_element
 
-        # If too close to left edge, move right
-        if x_pos < margin:
-            new_x = margin + 5
-            return text_element.replace(f'x="{x_match.group(1)}"', f'x="{new_x}"')
+        # Get text properties for correct calculation
+        text_width = self._get_text_width(text_element)
+        text_anchor = self._extract_text_anchor(text_element)
 
-        # If likely extending past right edge, move left slightly
-        font_size = self._extract_font_size(text_element)
-        text_content = self._extract_text_content(text_element)
-        estimated_width = len(text_content) * font_size * self.avg_char_width
+        # Calculate current bounds
+        left_edge, right_edge = self._calculate_text_bounds(x_pos, text_width, text_anchor)
 
-        if x_pos + estimated_width > canvas_width - margin:
-            # Move left to fit
-            new_x = max(margin, canvas_width - margin - estimated_width)
-            return text_element.replace(f'x="{x_match.group(1)}"', f'x="{new_x}"')
+        # Define safe boundaries
+        safe_left = margin
+        safe_right = canvas_width - margin
+
+        # Calculate new x position to fit within safe boundaries
+        new_x = x_pos  # Start with current position
+
+        if left_edge < safe_left:
+            # Text overflows left, need to move right
+            if text_anchor == 'middle':
+                # For middle anchor, x should be: safe_left + (text_width/2)
+                new_x = safe_left + (text_width / 2)
+            elif text_anchor == 'end':
+                # For end anchor, x should be: safe_left + text_width
+                new_x = safe_left + text_width
+            else:  # 'start'
+                # For start anchor, x should be: safe_left
+                new_x = safe_left
+
+        elif right_edge > safe_right:
+            # Text overflows right, need to move left
+            if text_anchor == 'middle':
+                # For middle anchor, x should be: safe_right - (text_width/2)
+                new_x = safe_right - (text_width / 2)
+            elif text_anchor == 'end':
+                # For end anchor, x should be: safe_right
+                new_x = safe_right
+            else:  # 'start'
+                # For start anchor, x should be: safe_right - text_width
+                new_x = safe_right - text_width
+
+        # Apply the new position if it changed
+        if abs(new_x - x_pos) > 0.1:  # Only update if significant change
+            return text_element.replace(f'x="{x_match.group(1)}"', f'x="{new_x:.1f}"')
 
         return text_element
 
