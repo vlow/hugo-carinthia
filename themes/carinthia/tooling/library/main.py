@@ -96,7 +96,7 @@ async def generate_and_download_cover(book: Book, models: List[str]) -> Optional
                             async for chunk in response.content.iter_chunked(8192):
                                 f.write(chunk)
 
-                        print(f"Generated cover downloaded to temporary file")
+                        print("Generated cover downloaded to temporary file")
                         return temp_path
                     else:
                         print(f"Failed to download generated cover (status: {response.status})")
