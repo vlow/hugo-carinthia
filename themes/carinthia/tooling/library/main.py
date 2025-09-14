@@ -69,8 +69,8 @@ async def main():
                 f.write(cover_svg)
             print(f"Generated: {cover_filename}")
 
-            # Generate banner image (1024x200px)
-            banner_svg = await llm_service.generate_banner_svg(cover_path, book)
+            # Generate banner image (1024x200px) based on cover SVG
+            banner_svg = await llm_service.generate_banner_svg(cover_path, book, cover_svg)
             banner_filename = f"{book.isbn}_banner{model_suffix}.svg"
 
             with open(banner_filename, 'w') as f:

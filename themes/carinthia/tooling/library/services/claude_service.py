@@ -40,15 +40,20 @@ class ClaudeService(LLMInterface):
 
         return image_data, media_type
 
-    def _format_prompt(self, template: str, book: Book) -> str:
+    def _format_prompt(self, template: str, book: Book, cover_svg: str = None) -> str:
         """Format prompt template with book information."""
-        return template.format(
-            title=book.title or "Unknown Title",
-            author=book.author or "Unknown Author",
-            publication_year=book.publication_year or "Unknown",
-            pages=book.pages or "Unknown",
-            description=book.description or "No description available"
-        )
+        format_dict = {
+            'title': book.title or "Unknown Title",
+            'author': book.author or "Unknown Author",
+            'publication_year': book.publication_year or "Unknown",
+            'pages': book.pages or "Unknown",
+            'description': book.description or "No description available"
+        }
+
+        if cover_svg is not None:
+            format_dict['cover_svg'] = cover_svg
+
+        return template.format(**format_dict)
 
     async def generate_cover_svg(self, cover_image_path: str, book: Book) -> str:
         """Generate a 236x327px cover SVG based on the original cover."""
@@ -85,10 +90,10 @@ class ClaudeService(LLMInterface):
 
         return message.content[0].text.strip()
 
-    async def generate_banner_svg(self, cover_image_path: str, book: Book) -> str:
-        """Generate a 1024x200px banner SVG based on the original cover."""
+    async def generate_banner_svg(self, cover_image_path: str, book: Book, cover_svg: str) -> str:
+        """Generate a 1024x200px banner SVG based on the original cover and stylized SVG cover."""
         template = self._load_prompt_template("banner_svg_prompt.txt")
-        prompt = self._format_prompt(template, book)
+        prompt = self._format_prompt(template, book, cover_svg)
 
         # Encode the cover image
         base64_image, media_type = self._encode_image(cover_image_path)

@@ -1,4 +1,4 @@
-You are an expert SVG designer tasked with creating a horizontal banner image inspired by the provided book cover.
+You are an expert SVG designer tasked with creating a horizontal banner image based on both the original book cover and its stylized SVG cover version.
 
 Book Information:
 - Title: {title}
@@ -6,27 +6,37 @@ Book Information:
 - Publication Year: {publication_year}
 - Pages: {pages}
 
+Context:
+- You are provided with the ORIGINAL book cover image
+- You are also provided with a STYLIZED SVG cover (236x327px) that was derived from the original cover
+- Your task is to create a banner version that maintains consistency with the stylized SVG cover
+
 Requirements:
 - Create an SVG with dimensions 1024x200px (horizontal banner format)
-- The design should be inspired by the original cover's visual elements and color scheme
-- Adapt the cover's design language to work in a wide horizontal format
+- The banner should be based on the stylized SVG cover, NOT directly on the original cover image
+- Maintain visual consistency with the provided SVG cover's design language, color palette, and aesthetic choices
+- Adapt the SVG cover's elements to work in a wide horizontal format
 - Include the book's title and author name prominently
 - The design should work well as a header banner for a book's detail page
 - Output only the complete SVG code, no additional text or explanations
 
 Style Guidelines:
-- Adapt vertical cover elements to work horizontally
-- Use the cover's color palette and visual themes
-- Ensure text remains readable at banner size
-- Create visual interest across the wide format
-- Consider using gradients, patterns, or abstract shapes inspired by the cover
-- The left or center area should accommodate text, with decorative elements on the right
-- Maintain the mood and aesthetic of the original cover
+- Use the SAME color palette as the provided SVG cover
+- Maintain the SAME design aesthetic and mood as the SVG cover
+- Adapt vertical SVG cover elements to work horizontally
+- Ensure text typography is consistent with the SVG cover
+- Create visual interest across the wide format while maintaining cohesion
+- The left or center area should accommodate text, with decorative elements extending across the banner
+- Preserve the artistic interpretation and style choices made in the SVG cover
 
 Design Approach:
-- Extract key visual elements, colors, and themes from the cover
-- Translate these into a horizontal composition
-- Create a cohesive design that feels connected to the original while working in banner format
-- Ensure the banner complements the cover without being identical
+- Analyze the stylized SVG cover to understand its design language, colors, and artistic choices
+- Use the original cover image only as reference for understanding the source material
+- Base your banner design primarily on extending the SVG cover's visual elements horizontally
+- Ensure the banner feels like a natural companion piece to the SVG cover
+- Maintain consistency in visual style, color usage, and overall aesthetic
 
-Please analyze the provided cover image and create a horizontal banner SVG that extends its visual language into a wide format suitable for a book detail page header.
+The SVG cover code is:
+{cover_svg}
+
+Please create a horizontal banner SVG that extends the design language of this SVG cover into a wide format suitable for a book detail page header.
