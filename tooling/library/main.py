@@ -11,8 +11,10 @@ import asyncio
 import json
 import os
 import secrets
+import subprocess
 import sys
 import tempfile
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Dict
@@ -301,6 +303,58 @@ async def handle_image_selection(paired_files_json: Dict, bundle_dir: str, all_g
     print("\nPage bundle setup complete!")
 
 
+def launch_editor_for_post(post_path: str) -> None:
+    """Launch editor for the created post with blocking detection."""
+    # Get editor with fallback chain
+    hugo_editor = os.getenv('HUGO_EDITOR')
+    if not hugo_editor:
+        hugo_editor = os.getenv('EDITOR')
+    if not hugo_editor:
+        hugo_editor = 'zed'
+
+    # Check if the editor exists
+    try:
+        # Check if command exists (works for both PATH commands and full paths)
+        result = subprocess.run(['which', hugo_editor], capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"⚠️  Editor '{hugo_editor}' not found in PATH.")
+            print("   Set HUGO_EDITOR or EDITOR environment variable to your preferred editor.")
+            print("   Skipping editor launch.")
+            return
+    except Exception:
+        print(f"⚠️  Could not verify editor '{hugo_editor}' exists.")
+        print("   Skipping editor launch.")
+        return
+
+    print(f"\nOpening {hugo_editor} for editing...")
+    print(f"Post location: {post_path}")
+    print("")
+
+    # Launch editor and measure time
+    start_time = time.time()
+    try:
+        subprocess.run([hugo_editor, post_path])
+    except Exception as e:
+        print(f"⚠️  Failed to launch editor: {e}")
+        return
+
+    end_time = time.time()
+    duration = int(end_time - start_time)
+
+    # Provide feedback based on editor behavior
+    if duration > 2:
+        print("")
+        print(f"⚠️  Editor took {duration} seconds to return.")
+        if duration > 10:
+            print("   Looks like you spent time editing - great!")
+            print("   Note: Image generation was delayed while editing.")
+        else:
+            print("   This suggests a terminal editor that blocked image generation.")
+        print("   Consider using a GUI editor (code, zed, gvim) for immediate detaching.")
+        print("   Set HUGO_EDITOR environment variable to your preferred editor.")
+        print("")
+
+
 async def main():
     parser = argparse.ArgumentParser(description='Generate library images from ISBN')
     parser.add_argument('isbn', help='ISBN of the book')
@@ -315,6 +369,8 @@ async def main():
                        help='Generate SVGs directly from book description without any cover image')
     parser.add_argument('-c', '--create', type=str, metavar='PATH',
                        help='Create post directory structure in the specified path')
+    parser.add_argument('-e', '--edit', action='store_true',
+                       help='Open post in editor after creation (requires --create)')
 
     args = parser.parse_args()
 
@@ -324,6 +380,10 @@ async def main():
     # Validate conflicting flags
     if args.generate_cover and args.direct:
         print("Error: Cannot use both --generate-cover (-g) and --direct (-d) flags together")
+        sys.exit(1)
+
+    if args.edit and not args.create:
+        print("Error: --edit (-e) requires --create (-c) flag")
         sys.exit(1)
 
     # Handle --create parameter
@@ -368,6 +428,11 @@ async def main():
         # Create Hugo library post if we're in creation mode
         if args.create:
             await create_hugo_post(book, isbn_dir)
+
+            # Launch editor if requested
+            if args.edit:
+                post_file = os.path.join(isbn_dir, 'index.md')
+                launch_editor_for_post(post_file)
 
         if args.direct:
             # Direct mode - generate SVGs from text only
