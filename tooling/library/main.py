@@ -208,8 +208,8 @@ async def create_hugo_post(book: Book, post_dir: str) -> None:
     post_filename = "index.md"
     post_path = os.path.join(post_dir, post_filename)
 
-    # Generate current timestamp
-    current_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+    # Generate current UTC timestamp
+    current_time = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
 
     # Determine category based on book metadata
     category = 'fiction'  # Default, could be enhanced with genre detection
