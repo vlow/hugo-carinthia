@@ -46,7 +46,6 @@ class CoverLookupService:
         if ai_services:
             print("No cover image found from available sources (Google Books, Goodreads).")
             print("Generating AI cover image as fallback...")
-            print("Tip: Use the -d/--direct flag to skip cover image generation and create vector graphics directly from text.")
 
             for service in ai_services:
                 try:
@@ -56,5 +55,14 @@ class CoverLookupService:
                 except Exception as e:
                     print(f"Error with {service.__class__.__name__}: {e}")
                     continue
+
+            # If AI fallback failed, suggest --direct mode
+            print("Failed to generate AI cover image as fallback.")
+            print("Tip: Use the -d/--direct flag to skip cover image generation and create vector graphics directly from text.")
+        else:
+            # No AI services available at all
+            print("No cover image found from available sources (Google Books, Goodreads).")
+            print("AI cover generation is not available (missing OPENAI_API_KEY).")
+            print("Tip: Use the -d/--direct flag to skip cover image generation and create vector graphics directly from text.")
 
         return None

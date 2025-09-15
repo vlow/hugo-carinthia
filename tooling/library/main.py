@@ -15,7 +15,7 @@ import subprocess
 import sys
 import tempfile
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional, Dict
 
@@ -209,7 +209,7 @@ async def create_hugo_post(book: Book, post_dir: str) -> None:
     post_path = os.path.join(post_dir, post_filename)
 
     # Generate current UTC timestamp
-    current_time = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    current_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     # Determine category based on book metadata
     category = 'fiction'  # Default, could be enhanced with genre detection
@@ -355,6 +355,53 @@ def launch_editor_for_post(post_path: str) -> None:
         print("")
 
 
+def validate_api_keys(models: List[str], generate_cover: bool = False) -> None:
+    """Validate that required API keys are available for the specified models and features.
+
+    Args:
+        models: List of model names that will be used
+        generate_cover: Whether --generate-cover flag is used
+
+    Raises:
+        SystemExit: If any required API key is missing
+    """
+    # Model to API key mapping
+    model_api_keys = {
+        'gpt-5': ('OPENAI_API_KEY', 'OpenAI'),
+        'claude': ('ANTHROPIC_API_KEY', 'Anthropic Claude')
+    }
+
+    missing_keys = []
+
+    # Check API keys for specified models
+    for model in models:
+        if model in model_api_keys:
+            env_var, service_name = model_api_keys[model]
+            if not os.getenv(env_var):
+                missing_keys.append((model, env_var, service_name))
+
+    # --generate-cover always requires OpenAI API key (only service that can generate pixel images)
+    if generate_cover and not os.getenv('OPENAI_API_KEY'):
+        # Avoid duplicate if already added above
+        if not any(key[1] == 'OPENAI_API_KEY' for key in missing_keys):
+            missing_keys.append(('--generate-cover', 'OPENAI_API_KEY', 'OpenAI DALL-E'))
+
+    if missing_keys:
+        print("Error: Missing required API keys:")
+        print("")
+        for context, env_var, service_name in missing_keys:
+            if context.startswith('--'):
+                print(f"  {context} flag requires {env_var} for {service_name}")
+            else:
+                print(f"  Model '{context}' requires {env_var} for {service_name}")
+        print("")
+        print("Please set the required environment variables:")
+        for context, env_var, service_name in missing_keys:
+            print(f"  export {env_var}=\"your_api_key_here\"")
+        print("")
+        sys.exit(1)
+
+
 async def main():
     parser = argparse.ArgumentParser(description='Generate library images from ISBN')
     parser.add_argument('isbn', help='ISBN of the book')
@@ -376,6 +423,9 @@ async def main():
 
     if not args.model:
         args.model = ['gpt-5']
+
+    # Validate API keys early - before doing any work
+    validate_api_keys(args.model, args.generate_cover)
 
     # Validate conflicting flags
     if args.generate_cover and args.direct:
