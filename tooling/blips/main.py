@@ -190,6 +190,37 @@ tags = []
             except (ValueError, KeyboardInterrupt):
                 return None
 
+    def parse_hugo_content(self, full_content: str) -> tuple[str, str]:
+        """Parse Hugo content into frontmatter and body content."""
+        lines = full_content.split('\n')
+
+        if not lines or not lines[0].strip() == '+++':
+            # No frontmatter found
+            return '', full_content
+
+        # Find end of frontmatter
+        frontmatter_end = -1
+        for i, line in enumerate(lines[1:], 1):
+            if line.strip() == '+++':
+                frontmatter_end = i
+                break
+
+        if frontmatter_end == -1:
+            # No closing +++, treat as no frontmatter
+            return '', full_content
+
+        frontmatter = '\n'.join(lines[:frontmatter_end + 1])
+        content = '\n'.join(lines[frontmatter_end + 1:]).lstrip('\n')
+
+        return frontmatter, content
+
+    def reconstruct_hugo_content(self, frontmatter: str, content: str) -> str:
+        """Reconstruct full Hugo content from frontmatter and body."""
+        if not frontmatter:
+            return content
+
+        return frontmatter + '\n\n' + content
+
     def call_openai(self, content: str, prompt: str) -> str:
         """Call OpenAI API with content and prompt."""
         try:
@@ -216,14 +247,20 @@ tags = []
 
         # Read prompt and current content
         prompt = prompt_file.read_text().strip()
-        current_content = blip_path.read_text()
+        full_content = blip_path.read_text()
+
+        # Parse frontmatter and content
+        frontmatter, content = self.parse_hugo_content(full_content)
 
         print(f"\nProcessing with prompt: {prompt_file.stem}")
-        processed_content = self.call_openai(current_content, prompt)
+        processed_content = self.call_openai(content, prompt)
+
+        # Reconstruct full content with original frontmatter
+        full_processed_content = self.reconstruct_hugo_content(frontmatter, processed_content)
 
         # Save to version stack and update file
-        self.version_stack.push(processed_content)
-        blip_path.write_text(processed_content)
+        self.version_stack.push(full_processed_content)
+        blip_path.write_text(full_processed_content)
 
         # Open in editor
         return self.edit_file(blip_path)
@@ -240,12 +277,19 @@ tags = []
 Return ONLY the processed text content, without any additional commentary, explanations, or meta-text like "Here is your edited version:" or similar. Just return the direct result."""
 
         # Process content
-        current_content = blip_path.read_text()
-        processed_content = self.call_openai(current_content, enhanced_prompt)
+        full_content = blip_path.read_text()
+
+        # Parse frontmatter and content
+        frontmatter, content = self.parse_hugo_content(full_content)
+
+        processed_content = self.call_openai(content, enhanced_prompt)
+
+        # Reconstruct full content with original frontmatter
+        full_processed_content = self.reconstruct_hugo_content(frontmatter, processed_content)
 
         # Save to version stack and update file
-        self.version_stack.push(processed_content)
-        blip_path.write_text(processed_content)
+        self.version_stack.push(full_processed_content)
+        blip_path.write_text(full_processed_content)
 
         # Open in editor
         return self.edit_file(blip_path)
