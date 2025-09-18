@@ -1,0 +1,11 @@
+OK, so we'll add a python script in tooling/blips. It should support the following workflow:
+
+- Create a new blip post file and open it for editing in the system default editor (check EDITOR environment variable, if not set, try vim. If it doesn't exist, try nano. If it doesn't exist, exit with an error message).
+- If the user exits the editor without saving, cancel the process (same as git commit).
+- If the user saves the file and exits the editor, show a menu and let the user choose one of the following options:
+
+- Copyread: Run against gpt-5 using the openai api with a prompt, saved as text file in the "prompts" subdirectory of the python script. Save all (further) prompts used for LLMs in there and don't inline any prompts into python code! If there are several prompts in the directory, let the user choose which one to use. Once the answer returns, open it in the editor directly (same fallback strategy as above). Make sure to move all previous versions onto a stack, so we can undo and redo changes made by the AI. Once several versions exist, add an Undo option to the menu. Keep all versions in memory and write the currently selected version to the blip file. If the user saves changes to the file, this is the new head and you can drop existing "redo" versions and only keep the undo versions (usual logic for undo and redo).
+- Custom AI Processing: Let the user enter a prompt and send it to gpt-5 via api. Extend the prompt so only the processed result is returned, no additional answer from the LLM like "OK, here is your edited version:...". The rest is the same with the predefined prompts. It also uses the same undo/redo stack.
+
+- Publish the blip. This will run a "deploy.sh" script in the project root. Add a create_blip.sh script in the project root with its absolute position as argument and pass on all further arguments to the python script. The python script accepts the path argument and uses it to find the project root. The "deploy.sh" script in the project root, will call hugo on the blog content and create the static files and then rsync the rendered content in public to a remote path configurable in a  json config file in the python tools root directory (default ssh://tc3.eu/var/www/).
+- Exit: This will leave the files in it's current state and exit.
