@@ -128,7 +128,7 @@ class BlipTool:
         content = f"""+++
 title = 'New Blip'
 date = {now.isoformat()}
-draft = true
+draft = false
 tags = []
 +++
 
