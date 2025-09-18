@@ -69,11 +69,7 @@ class BlipTool:
         self.project_root = project_root
         self.tooling_root = project_root / "tooling" / "blips"
         self.prompts_dir = self.tooling_root / "prompts"
-        self.config_file = self.tooling_root / "config.json"
         self.version_stack = VersionStack()
-
-        # Load configuration
-        self.config = self.load_config()
 
         # Check if OpenAI API key is available
         self.has_openai_key = bool(os.getenv('OPENAI_API_KEY'))
@@ -86,27 +82,7 @@ class BlipTool:
         else:
             self.openai_client = None
 
-    def load_config(self) -> Dict[str, Any]:
-        """Load configuration from JSON file."""
-        default_config = {
-            "deploy_target": "ssh://tc3.eu/var/www/"
-        }
 
-        if self.config_file.exists():
-            try:
-                with open(self.config_file, 'r') as f:
-                    config = json.load(f)
-                    return {**default_config, **config}
-            except (json.JSONDecodeError, IOError):
-                pass
-
-        return default_config
-
-    def save_config(self):
-        """Save configuration to JSON file."""
-        self.config_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.config_file, 'w') as f:
-            json.dump(self.config, f, indent=2)
 
     def find_editor(self) -> str:
         """Find available text editor."""
