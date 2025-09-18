@@ -146,8 +146,15 @@ tags = []
         # Get original modification time
         orig_mtime = file_path.stat().st_mtime if file_path.exists() else 0
 
+        # Build editor command with vim-specific options
+        if 'vim' in editor.lower():
+            # Start vim with cursor at end of file
+            cmd = [editor, '+$', str(file_path)]
+        else:
+            cmd = [editor, str(file_path)]
+
         # Open editor
-        result = subprocess.run([editor, str(file_path)])
+        result = subprocess.run(cmd)
 
         if result.returncode != 0:
             return False
