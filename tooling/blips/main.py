@@ -148,8 +148,9 @@ tags = []
 
         # Build editor command with vim-specific options
         if 'vim' in editor.lower():
-            # Start vim with cursor at end of file
-            cmd = [editor, '+$', str(file_path)]
+            # Start vim with cursor at first content line after frontmatter
+            # For our blip template, content starts at line 8 (after frontmatter + blank line)
+            cmd = [editor, '+8', str(file_path)]
         else:
             cmd = [editor, str(file_path)]
 
