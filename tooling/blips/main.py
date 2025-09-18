@@ -313,6 +313,17 @@ Return ONLY the processed text content, without any additional commentary, expla
             print("Nothing to undo.")
             return False
 
+    def redo_changes(self, blip_path: Path) -> bool:
+        """Redo last undone change."""
+        content = self.version_stack.redo()
+        if content:
+            blip_path.write_text(content)
+            print("Redid last change.")
+            return True
+        else:
+            print("Nothing to redo.")
+            return False
+
     def deploy_blip(self) -> bool:
         """Deploy the blog."""
         deploy_script = self.project_root / "deploy.sh"
@@ -329,19 +340,33 @@ Return ONLY the processed text content, without any additional commentary, expla
         """Show main menu and get user choice."""
         print(f"\nBlip file: {blip_path.name}")
         print("\nOptions:")
-        print("1. Copyread (AI editing with predefined prompts)")
-        print("2. Custom AI Processing")
+        print("1. Copyread (Predefined Prompts)")
+        print("2. Prompt Changes (GPT)")
         print("3. Edit manually")
         print("4. Publish")
         print("5. Exit")
 
+        # Add undo/redo options with separator
+        if self.version_stack.can_undo() or self.version_stack.can_redo():
+            print()  # Empty line separator
+
         if self.version_stack.can_undo():
-            print("6. Undo")
+            print("u. Undo")
+
+        if self.version_stack.can_redo():
+            print("r. Redo")
 
         while True:
             try:
-                choice = input("\nSelect option: ").strip()
-                if choice in ['1', '2', '3', '4', '5'] or (choice == '6' and self.version_stack.can_undo()):
+                choice = input("\nSelect option: ").strip().lower()
+                valid_choices = ['1', '2', '3', '4', '5']
+
+                if self.version_stack.can_undo():
+                    valid_choices.append('u')
+                if self.version_stack.can_redo():
+                    valid_choices.append('r')
+
+                if choice in valid_choices:
                     return choice
                 print("Invalid choice.")
             except (KeyboardInterrupt, EOFError):
@@ -384,8 +409,10 @@ Return ONLY the processed text content, without any additional commentary, expla
                 break
             elif choice == '5':  # Exit
                 break
-            elif choice == '6':  # Undo
+            elif choice == 'u':  # Undo
                 self.undo_changes(blip_path)
+            elif choice == 'r':  # Redo
+                self.redo_changes(blip_path)
 
 
 def main():
