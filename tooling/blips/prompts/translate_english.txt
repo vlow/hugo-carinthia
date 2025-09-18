@@ -1,0 +1,1 @@
+Translate this text to English. Do not change the meaning. Use the same tone as the original. Keep the formatting as is. Return only the translated text without any additional commentary or explanations.
