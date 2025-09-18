@@ -2,22 +2,27 @@
 
 import base64
 import os
+import sys
 from pathlib import Path
 from typing import Optional
 import anthropic
 from interfaces.llm_interface import LLMInterface
 from models.book import Book
 
+# Add parent directory to path to import shared utilities
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from shared.config import config_manager
+
 
 class ClaudeService(LLMInterface):
     """Anthropic Claude service for generating SVGs."""
 
     def __init__(self):
-        self.client = anthropic.AsyncAnthropic(
-            api_key=os.getenv('ANTHROPIC_API_KEY')
-        )
-        if not os.getenv('ANTHROPIC_API_KEY'):
-            raise ValueError("ANTHROPIC_API_KEY environment variable is required")
+        api_key = config_manager.get_api_key('ANTHROPIC_API_KEY')
+        if not api_key:
+            raise ValueError("ANTHROPIC_API_KEY is required (set environment variable or add to ~/.config/carinthia/config.json)")
+
+        self.client = anthropic.AsyncAnthropic(api_key=api_key)
 
     def _load_prompt_template(self, template_name: str) -> str:
         """Load prompt template from file."""

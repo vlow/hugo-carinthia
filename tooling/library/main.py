@@ -27,6 +27,10 @@ from services.llm_service import LLMService
 from services.simple_overflow_fixer import SimpleOverflowFixer
 from models.book import Book
 
+# Add parent directory to path to import shared utilities
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from shared.config import config_manager
+
 
 def group_files_by_pairs(generated_files: List[str]) -> Dict:
     """Group generated SVG files by their hash prefix to create cover/banner pairs."""
@@ -306,11 +310,7 @@ async def handle_image_selection(paired_files_json: Dict, bundle_dir: str, all_g
 def launch_editor_for_post(post_path: str) -> None:
     """Launch editor for the created post with blocking detection."""
     # Get editor with fallback chain
-    hugo_editor = os.getenv('HUGO_EDITOR')
-    if not hugo_editor:
-        hugo_editor = os.getenv('EDITOR')
-    if not hugo_editor:
-        hugo_editor = 'zed'
+    hugo_editor = config_manager.get_editor()
 
     # Check if the editor exists
     try:
@@ -377,11 +377,11 @@ def validate_api_keys(models: List[str], generate_cover: bool = False) -> None:
     for model in models:
         if model in model_api_keys:
             env_var, service_name = model_api_keys[model]
-            if not os.getenv(env_var):
+            if not config_manager.has_api_key(env_var):
                 missing_keys.append((model, env_var, service_name))
 
     # --generate-cover always requires OpenAI API key (only service that can generate pixel images)
-    if generate_cover and not os.getenv('OPENAI_API_KEY'):
+    if generate_cover and not config_manager.has_api_key('OPENAI_API_KEY'):
         # Avoid duplicate if already added above
         if not any(key[1] == 'OPENAI_API_KEY' for key in missing_keys):
             missing_keys.append(('--generate-cover', 'OPENAI_API_KEY', 'OpenAI DALL-E'))
@@ -395,9 +395,17 @@ def validate_api_keys(models: List[str], generate_cover: bool = False) -> None:
             else:
                 print(f"  Model '{context}' requires {env_var} for {service_name}")
         print("")
-        print("Please set the required environment variables:")
+        print("Please set the required API keys via environment variables:")
         for context, env_var, service_name in missing_keys:
             print(f"  export {env_var}=\"your_api_key_here\"")
+        print("")
+        print("Or add them to ~/.config/carinthia/config.json:")
+        print('  {')
+        print('    "api_keys": {')
+        for context, env_var, service_name in missing_keys:
+            print(f'      "{env_var}": "your_api_key_here"{"," if (context, env_var, service_name) != missing_keys[-1] else ""}')
+        print('    }')
+        print('  }')
         print("")
         sys.exit(1)
 

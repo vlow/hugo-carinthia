@@ -18,6 +18,10 @@ from typing import List, Optional, Dict, Any
 
 import openai
 
+# Add parent directory to path to import shared utilities
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from shared.config import config_manager
+
 
 class VersionStack:
     """Manages undo/redo stack for blip content versions."""
@@ -72,13 +76,12 @@ class BlipTool:
         self.version_stack = VersionStack()
 
         # Check if OpenAI API key is available
-        self.has_openai_key = bool(os.getenv('OPENAI_API_KEY'))
+        self.has_openai_key = config_manager.has_api_key('OPENAI_API_KEY')
 
         # Initialize OpenAI client if key is available
         if self.has_openai_key:
-            self.openai_client = openai.OpenAI(
-                api_key=os.getenv('OPENAI_API_KEY')
-            )
+            api_key = config_manager.get_api_key('OPENAI_API_KEY')
+            self.openai_client = openai.OpenAI(api_key=api_key)
         else:
             self.openai_client = None
 
@@ -86,17 +89,20 @@ class BlipTool:
 
     def find_editor(self) -> str:
         """Find available text editor."""
-        # Check EDITOR environment variable first
-        editor = os.getenv('EDITOR')
-        if editor:
+        # Get blip editor from config manager
+        editor = config_manager.get_blip_editor()
+
+        # Check if the editor exists
+        if subprocess.run(['which', editor], capture_output=True).returncode == 0:
             return editor
 
-        # Try common editors
-        for editor in ['vim', 'nano']:
-            if subprocess.run(['which', editor], capture_output=True).returncode == 0:
-                return editor
+        # Try fallbacks if configured editor doesn't exist
+        for fallback_editor in ['vim', 'nano']:
+            if subprocess.run(['which', fallback_editor], capture_output=True).returncode == 0:
+                return fallback_editor
 
-        print("Error: No text editor found. Please set EDITOR environment variable or install vim/nano.")
+        print(f"Error: No text editor found. Configured blip editor '{editor}' not available.")
+        print("Please install the configured editor or set BLIP_EDITOR/EDITOR environment variable.")
         sys.exit(1)
 
     def create_blip_file(self) -> Path:
@@ -382,6 +388,16 @@ Return ONLY the processed text content, without any additional commentary, expla
         print("⚠️  Warning: OpenAI API key not found")
         print("Without an API key, AI features (Copyread and Prompt Changes) will not be available.")
         print("Only manual editing and publishing will work.")
+        print("")
+        print("To enable AI features, set the OPENAI_API_KEY environment variable:")
+        print("  export OPENAI_API_KEY=\"your_api_key_here\"")
+        print("")
+        print("Or add it to ~/.config/carinthia/config.json:")
+        print("  {")
+        print('    "api_keys": {')
+        print('      "OPENAI_API_KEY": "your_api_key_here"')
+        print("    }")
+        print("  }")
 
         while True:
             choice = input("\nContinue anyway? (y/n): ").strip().lower()
