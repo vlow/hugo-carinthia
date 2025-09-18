@@ -75,10 +75,16 @@ class BlipTool:
         # Load configuration
         self.config = self.load_config()
 
-        # Initialize OpenAI client
-        self.openai_client = openai.OpenAI(
-            api_key=os.getenv('OPENAI_API_KEY')
-        )
+        # Check if OpenAI API key is available
+        self.has_openai_key = bool(os.getenv('OPENAI_API_KEY'))
+
+        # Initialize OpenAI client if key is available
+        if self.has_openai_key:
+            self.openai_client = openai.OpenAI(
+                api_key=os.getenv('OPENAI_API_KEY')
+            )
+        else:
+            self.openai_client = None
 
     def load_config(self) -> Dict[str, Any]:
         """Load configuration from JSON file."""
@@ -340,11 +346,30 @@ Return ONLY the processed text content, without any additional commentary, expla
         """Show main menu and get user choice."""
         print(f"\nBlip file: {blip_path.name}")
         print("\nOptions:")
-        print("1. Copyread (Predefined Prompts)")
-        print("2. Prompt Changes (GPT)")
-        print("3. Edit manually")
-        print("4. Publish")
-        print("5. Exit")
+
+        option_map = {}
+        current_option = 1
+
+        # Add AI options only if API key is available
+        if self.has_openai_key:
+            print(f"{current_option}. Copyread (Predefined Prompts)")
+            option_map[str(current_option)] = 'copyread'
+            current_option += 1
+
+            print(f"{current_option}. Prompt Changes (GPT)")
+            option_map[str(current_option)] = 'custom_ai'
+            current_option += 1
+
+        print(f"{current_option}. Edit manually")
+        option_map[str(current_option)] = 'edit'
+        current_option += 1
+
+        print(f"{current_option}. Publish")
+        option_map[str(current_option)] = 'publish'
+        current_option += 1
+
+        print(f"{current_option}. Exit")
+        option_map[str(current_option)] = 'exit'
 
         # Add undo/redo options with separator
         if self.version_stack.can_undo() or self.version_stack.can_redo():
@@ -359,7 +384,7 @@ Return ONLY the processed text content, without any additional commentary, expla
         while True:
             try:
                 choice = input("\nSelect option: ").strip().lower()
-                valid_choices = ['1', '2', '3', '4', '5']
+                valid_choices = list(option_map.keys())
 
                 if self.version_stack.can_undo():
                     valid_choices.append('u')
@@ -367,16 +392,35 @@ Return ONLY the processed text content, without any additional commentary, expla
                     valid_choices.append('r')
 
                 if choice in valid_choices:
-                    return choice
+                    # Return the mapped action or the choice itself for u/r
+                    return option_map.get(choice, choice)
                 print("Invalid choice.")
             except (KeyboardInterrupt, EOFError):
-                return '5'
+                return 'exit'
+
+    def check_openai_key_warning(self) -> bool:
+        """Show warning about missing OpenAI API key and get user confirmation."""
+        if self.has_openai_key:
+            return True
+
+        print("⚠️  Warning: OpenAI API key not found")
+        print("Without an API key, AI features (Copyread and Prompt Changes) will not be available.")
+        print("Only manual editing and publishing will work.")
+
+        while True:
+            choice = input("\nContinue anyway? (y/n): ").strip().lower()
+            if choice in ['y', 'yes']:
+                return True
+            elif choice in ['n', 'no']:
+                return False
+            print("Please enter 'y' or 'n'")
 
     def run(self):
         """Main execution loop."""
-        if not os.getenv('OPENAI_API_KEY'):
-            print("Error: OPENAI_API_KEY environment variable not set.")
-            sys.exit(1)
+        # Check OpenAI API key and show warning if needed
+        if not self.check_openai_key_warning():
+            print("Exiting...")
+            return
 
         # Create new blip file
         blip_path = self.create_blip_file()
@@ -395,19 +439,19 @@ Return ONLY the processed text content, without any additional commentary, expla
         while True:
             choice = self.show_menu(blip_path)
 
-            if choice == '1':  # Copyread
+            if choice == 'copyread':  # Copyread
                 self.copyread_blip(blip_path)
-            elif choice == '2':  # Custom AI Processing
+            elif choice == 'custom_ai':  # Prompt Changes (GPT)
                 self.custom_ai_processing(blip_path)
-            elif choice == '3':  # Edit manually
+            elif choice == 'edit':  # Edit manually
                 if self.edit_file(blip_path):
                     # User made changes, add to stack
                     self.version_stack.push(blip_path.read_text())
-            elif choice == '4':  # Publish
+            elif choice == 'publish':  # Publish
                 if self.deploy_blip():
                     print("Blog deployed successfully!")
                 break
-            elif choice == '5':  # Exit
+            elif choice == 'exit':  # Exit
                 break
             elif choice == 'u':  # Undo
                 self.undo_changes(blip_path)
