@@ -1,0 +1,19 @@
+So for blog posts / project posts, we want something similar like for blips: An easy way to create a new file and immediately open it in the editor. But similarly to library posts, we want to use a richer editor for that (typically UI editor). Since this will in most cases detach the editor from the console thread, we split creation and processing in two different steps:
+
+# Creation
+Add a script which first creates a new blog post and then opens it in the editor set in the HUGO_EDITOR env variable or the carinthia settings as editor. Create the new post as hugo bundle (check out the official documentation if necessary). If possible, use the `hugo` command to create the post bundle. Print the path for the created bundle to the console.
+
+Do the same for project posts, so we have two simple scripts. This doesn't need python yet and should be a simple shell script nect to [@create_blip.sh](file:///Users/f.engel/Code/hugo-carinthia/create_blip.sh) and [@create_library_post.sh](file:///Users/f.engel/Code/hugo-carinthia/create_library_post.sh).
+
+# Processing
+We use a second script to do the processing. This time, it should be python. When we start the script, it shows _all_ kinds of posts (library, blip, posts, projects) in a list ordered by date. The list is pageable (page size 10). We can also call the python script with a path to a post as argument (MD file) which will skip the menu and select the given MD file directly for processing.
+
+After the user has selected the file, we first ensure correct formatting. This means, we make sure every sentence is on its own line. Paragraphs are still separated by an additional empty line (usual markdown syntax). This allows us to diff changes proposed by the following proof-read/copy-read process better. The formatting step can be in its own script and just being called from the processing script, so it is re-usable.
+
+Next, the processing script shows all available prompts in the subdirectory "prompts" of the script. Compare to blips, where we have a similar logic. The user selects one of the predefined prompts. The result must be formatted identically. The easiest way to achieve this is by running the result through the formatting script created above.
+
+Once finished, the user selects if he wants to edit the result directly or accept changes individually. If they choose direct edit, the llm result replaces the post file content with the result of the llm and opens it in the default editor set in carinthia config (compare library post) or starts vimdiff, if the changes should be accepted individually. In that case, the LLM result must reside in a separate file and the user will accept the changes to the original post (or not). At the end (user saves and exits), the LLM result is discarded and only the accepted changes go into the post. If the user exits without saving, discard all changes.
+
+Similarly to the blip logic, all changes made to the original posts must be un- and redoable, so all versions of the edited post live on a stack and the user can choose undo/redo from the menu. If changes are made to a previous version, this version becomes the new head and other versions newer to the previous version are discarded (usual undo/redo logic).
+
+After each step, the user goes back to the main menu where they can open the file for editing or run another prompt or undo/redo (or exit).
