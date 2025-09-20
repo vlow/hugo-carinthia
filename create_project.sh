@@ -19,8 +19,20 @@ if [ -z "$TITLE" ]; then
     exit 1
 fi
 
-# Create slug from title (lowercase, replace spaces with hyphens, remove special chars)
-SLUG=$(echo "$TITLE" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9 ]//g' | sed 's/ \+/-/g' | sed 's/^-\+\|-\+$//g')
+# Create slug from title with improved slugification
+slugify_title() {
+    echo "$1" | \
+        tr '[:upper:]' '[:lower:]' | \
+        sed 's/[àáâãäå]/a/g; s/[èéêë]/e/g; s/[ìíîï]/i/g; s/[òóôõö]/o/g; s/[ùúûü]/u/g; s/[ñ]/n/g; s/[ç]/c/g' | \
+        sed 's/[^a-z0-9 ]//g' | \
+        tr -s ' ' | \
+        tr ' ' '-' | \
+        sed 's/^-\+\|-\+$//g' | \
+        cut -c1-50 | \
+        sed 's/-\+$//g'
+}
+
+SLUG=$(slugify_title "$TITLE")
 
 if [ -z "$SLUG" ]; then
     echo "Error: Could not generate valid slug from title."

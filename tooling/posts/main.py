@@ -15,6 +15,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Dict, Any, Tuple
 import re
+import shutil
+import unicodedata
 
 # Add parent directory to path to import shared utilities
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -107,6 +109,181 @@ class PostProcessor:
             self.openai_client = openai.OpenAI(api_key=api_key)
         else:
             self.openai_client = None
+
+    def slugify(self, text: str, max_length: int = 50) -> str:
+        """
+        Convert text to a filesystem-safe slug.
+
+        Args:
+            text: Text to slugify
+            max_length: Maximum length of the slug
+
+        Returns:
+            Slugified text
+        """
+        if not text:
+            return ""
+
+        # Normalize unicode characters
+        text = unicodedata.normalize('NFD', text)
+
+        # Convert to lowercase and handle common accented characters
+        text = text.lower()
+
+        # Replace accented characters with base characters
+        replacements = {
+            'à': 'a', 'á': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a', 'å': 'a',
+            'è': 'e', 'é': 'e', 'ê': 'e', 'ë': 'e',
+            'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i',
+            'ò': 'o', 'ó': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o',
+            'ù': 'u', 'ú': 'u', 'û': 'u', 'ü': 'u',
+            'ñ': 'n', 'ç': 'c'
+        }
+
+        for accented, base in replacements.items():
+            text = text.replace(accented, base)
+
+        # Remove non-alphanumeric characters except spaces
+        text = re.sub(r'[^a-z0-9\s]', '', text)
+
+        # Replace multiple spaces/whitespace with single hyphens
+        text = re.sub(r'\s+', '-', text)
+
+        # Remove leading/trailing hyphens
+        text = text.strip('-')
+
+        # Limit length and ensure we don't cut off in the middle of a word
+        if len(text) > max_length:
+            text = text[:max_length].rstrip('-')
+            # Find last hyphen to avoid cutting words
+            last_hyphen = text.rfind('-')
+            if last_hyphen > max_length * 0.7:  # If hyphen is reasonably close to end
+                text = text[:last_hyphen]
+
+        return text or "untitled"
+
+    def re_slug_post(self, post_info: PostInfo) -> Optional[PostInfo]:
+        """
+        Re-slug a post based on its current title.
+
+        Args:
+            post_info: Current post information
+
+        Returns:
+            Updated PostInfo if successful, None if failed
+        """
+        try:
+            # Read current content to extract title
+            content = post_info.path.read_text(encoding='utf-8')
+            frontmatter, body = parse_hugo_content(content)
+
+            if not frontmatter:
+                print("Error: No frontmatter found in post.")
+                return None
+
+            # Extract current title from frontmatter
+            current_title = ""
+            for line in frontmatter.split('\n'):
+                line = line.strip()
+                if line.startswith('title = '):
+                    current_title = line.split('=', 1)[1].strip().strip("'\"")
+                    break
+
+            if not current_title:
+                print("Error: No title found in frontmatter.")
+                return None
+
+            # Generate new slug from current title
+            new_slug = self.slugify(current_title)
+
+            # Determine post type and handle accordingly
+            if post_info.post_type == 'post':
+                return self._re_slug_post_bundle(post_info, new_slug)
+            elif post_info.post_type == 'project':
+                return self._re_slug_project_file(post_info, new_slug)
+            else:
+                print(f"Re-slugging not supported for post type: {post_info.post_type}")
+                return None
+
+        except Exception as e:
+            print(f"Error re-slugging post: {e}")
+            return None
+
+    def _re_slug_post_bundle(self, post_info: PostInfo, new_slug: str) -> Optional[PostInfo]:
+        """Re-slug a post bundle (directory with index.md)."""
+        old_path = post_info.path
+        old_dir = old_path.parent
+
+        # Check if this is actually a bundle
+        if old_path.name != 'index.md':
+            print("Error: Expected bundle structure with index.md")
+            return None
+
+        # Generate new directory path
+        posts_dir = old_dir.parent
+        new_dir = posts_dir / new_slug
+
+        # Check if target already exists
+        if new_dir.exists() and new_dir != old_dir:
+            counter = 1
+            while True:
+                new_dir = posts_dir / f"{new_slug}-{counter}"
+                if not new_dir.exists():
+                    break
+                counter += 1
+            new_slug = f"{new_slug}-{counter}"
+
+        if new_dir == old_dir:
+            print("Slug is already current.")
+            return post_info
+
+        # Move the directory
+        print(f"Renaming directory: {old_dir.name} → {new_dir.name}")
+        old_dir.rename(new_dir)
+
+        # Update post info
+        new_post_info = PostInfo(
+            new_dir / 'index.md',
+            post_info.post_type,
+            post_info.title,
+            post_info.date
+        )
+
+        return new_post_info
+
+    def _re_slug_project_file(self, post_info: PostInfo, new_slug: str) -> Optional[PostInfo]:
+        """Re-slug a project file."""
+        old_path = post_info.path
+        projects_dir = old_path.parent
+        new_path = projects_dir / f"{new_slug}.md"
+
+        # Check if target already exists
+        if new_path.exists() and new_path != old_path:
+            counter = 1
+            while True:
+                new_path = projects_dir / f"{new_slug}-{counter}.md"
+                if not new_path.exists():
+                    break
+                counter += 1
+            new_slug = f"{new_slug}-{counter}"
+
+        if new_path == old_path:
+            print("Slug is already current.")
+            return post_info
+
+        # Move the file
+        print(f"Renaming file: {old_path.name} → {new_path.name}")
+        old_path.rename(new_path)
+
+        # Update post info
+        new_post_info = PostInfo(
+            new_path,
+            post_info.post_type,
+            post_info.title,
+            post_info.date
+        )
+
+        return new_post_info
 
     def find_all_posts(self) -> List[PostInfo]:
         """Find all posts across different content types."""
@@ -456,10 +633,6 @@ class PostProcessor:
         option_map = {}
         current_option = 1
 
-        print(f"{current_option}. Format content (sentence per line)")
-        option_map[str(current_option)] = 'format'
-        current_option += 1
-
         if self.has_openai_key and self.get_prompts():
             print(f"{current_option}. Process with AI prompt")
             option_map[str(current_option)] = 'ai_prompt'
@@ -468,6 +641,16 @@ class PostProcessor:
         print(f"{current_option}. Edit manually")
         option_map[str(current_option)] = 'edit'
         current_option += 1
+
+        print(f"{current_option}. Format content (sentence per line)")
+        option_map[str(current_option)] = 'format'
+        current_option += 1
+
+        # Add re-slug option for posts and projects
+        if post_info.post_type in ['post', 'project']:
+            print(f"{current_option}. Re-slug from current title")
+            option_map[str(current_option)] = 're_slug'
+            current_option += 1
 
         print(f"{current_option}. Select different post")
         option_map[str(current_option)] = 'select'
@@ -531,6 +714,10 @@ class PostProcessor:
         current_content = selected_post.path.read_text(encoding='utf-8')
         self.version_stack.push(current_content)
 
+        # Auto-format the post on selection
+        print(f"Auto-formatting post: {selected_post.title or selected_post.path.stem}")
+        self.format_post(selected_post.path)
+
         # Main processing loop
         while True:
             choice = self.show_main_menu(selected_post)
@@ -545,8 +732,19 @@ class PostProcessor:
                     self.version_stack = VersionStack()
                     current_content = selected_post.path.read_text(encoding='utf-8')
                     self.version_stack.push(current_content)
+                    # Auto-format the newly selected post
+                    print(f"Auto-formatting post: {selected_post.title or selected_post.path.stem}")
+                    self.format_post(selected_post.path)
             elif choice == 'format':
                 self.format_post(selected_post.path)
+            elif choice == 're_slug':
+                new_post_info = self.re_slug_post(selected_post)
+                if new_post_info:
+                    selected_post = new_post_info
+                    # Reset version stack for re-slugged post
+                    self.version_stack = VersionStack()
+                    current_content = selected_post.path.read_text(encoding='utf-8')
+                    self.version_stack.push(current_content)
             elif choice == 'ai_prompt':
                 prompt = self.select_prompt()
                 if prompt:
