@@ -120,6 +120,7 @@ draft = false
 tags = []
 +++
 
+
 """
 
         blip_path = self.project_root / "content" / "blips" / filename
