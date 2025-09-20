@@ -47,27 +47,24 @@ while [ -d "./content/posts/$SLUG" ]; do
     COUNTER=$((COUNTER + 1))
 done
 
-# Create post bundle directory
-POST_DIR="./content/posts/$SLUG"
-mkdir -p "$POST_DIR"
+# Use Hugo to create the post bundle
+POST_PATH="posts/$SLUG/index.md"
+hugo new content "$POST_PATH"
 
-# Get current date in Hugo format
-DATE=$(date -u +"%Y-%m-%dT%H:%M:%S%z")
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to create post with Hugo"
+    exit 1
+fi
 
-# Create index.md with frontmatter
-cat > "$POST_DIR/index.md" << EOF
-+++
-title = '$TITLE'
-date = $DATE
-draft = true
-tags = []
-+++
+# Update the title in the created file to match user input
+POST_FILE="./content/$POST_PATH"
+if [ -f "$POST_FILE" ]; then
+    # Replace the auto-generated title with user's title
+    sed -i '' "s/title = '.*'/title = '$TITLE'/" "$POST_FILE"
+fi
 
-Write your post content here...
-EOF
-
-echo "Created post bundle: $POST_DIR"
-echo "Post file: $POST_DIR/index.md"
+echo "Created post bundle: ./content/posts/$SLUG"
+echo "Post file: $POST_FILE"
 
 # Get editor from HUGO_EDITOR env var or carinthia config
 cd tooling/shared
@@ -77,7 +74,7 @@ cd - > /dev/null
 # Open in editor if available
 if [ -n "$EDITOR_CMD" ]; then
     echo "Opening in editor: $EDITOR_CMD"
-    $EDITOR_CMD "$POST_DIR/index.md"
+    $EDITOR_CMD "$POST_FILE"
 else
     echo "No editor configured. Set HUGO_EDITOR environment variable or configure editor in carinthia settings."
 fi

@@ -47,27 +47,21 @@ while [ -f "./content/projects/$SLUG.md" ]; do
     COUNTER=$((COUNTER + 1))
 done
 
-# Get current date in Hugo format
-DATE=$(date -u +"%Y-%m-%dT%H:%M:%S%z")
+# Use Hugo to create the project file
+PROJECT_PATH="projects/$SLUG.md"
+hugo new content "$PROJECT_PATH"
 
-# Create project file
-PROJECT_FILE="./content/projects/$SLUG.md"
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to create project with Hugo"
+    exit 1
+fi
 
-cat > "$PROJECT_FILE" << EOF
-+++
-date = '$DATE'
-draft = true
-title = '$TITLE'
-status = 'current' # current or cemetery
-tags = []
-categories = []
-github = '' # GitHub repository URL
-website = '' # Project website URL
-summary = ''
-+++
-
-Write your project description here...
-EOF
+# Update the title in the created file to match user input
+PROJECT_FILE="./content/$PROJECT_PATH"
+if [ -f "$PROJECT_FILE" ]; then
+    # Replace the auto-generated title with user's title
+    sed -i '' "s/title = '.*'/title = '$TITLE'/" "$PROJECT_FILE"
+fi
 
 echo "Created project file: $PROJECT_FILE"
 
