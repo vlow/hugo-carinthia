@@ -493,9 +493,9 @@ class PostProcessor:
             print(f"Processing with prompt: {prompt_path.stem}")
             print("Calling OpenAI API...")
 
-            # Call OpenAI API
+            # Call OpenAI API with latest GPT-4.1 model
             response = self.openai_client.chat.completions.create(
-                model="gpt-4",
+                model="gpt-4.1",
                 messages=[
                     {"role": "system", "content": prompt_content},
                     {"role": "user", "content": body}
